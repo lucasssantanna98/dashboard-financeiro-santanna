@@ -77,7 +77,7 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
                 Fechamento Semanal em Lote
               </h2>
               <p className="text-xs text-slate-400">
-                Preencha todos os ganhos da semana de uma s{'\u00f3'} vez
+                Preencha todos os ganhos da semana de uma sÃ³ vez
               </p>
             </div>
           </div>
@@ -95,7 +95,7 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
           {/* Seletor de Semana */}
           <div>
             <label className="text-xs font-medium text-slate-400 mb-2 block">
-              Escolha a Semana do M{'\u00ea'}s:
+              Escolha a Semana do MÃªs:
             </label>
             <div className="grid grid-cols-5 gap-2">
               {[1, 2, 3, 4, 5].map((w) => (

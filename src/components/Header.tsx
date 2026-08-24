@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  Sant&apos;Anna Finan{'\u00e7'}as
+                  Sant&apos;Anna FinanÃ§as
                 </h1>
                 <span className="text-[10px] uppercase font-semibold tracking-widest bg-cyan-950/60 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-800/40">
                   Casal
@@ -98,7 +98,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={handlePrevMonth}
             className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
-            title="M\u00eas Anterior"
+            title="MÃªs Anterior"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -120,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={handleNextMonth}
             className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
-            title="Pr\u00f3ximo M\u00eas"
+            title="PrÃ³ximo MÃªs"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -133,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-cyan-600/20 transition active:scale-95 whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Entrada R{'\u00e1'}pida</span>
+            <span>+ Entrada RÃ¡pida</span>
           </button>
 
           <button

@@ -178,7 +178,7 @@ export default function DashboardPage() {
             }`}
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span>Vis{'\u00e3'}o Geral</span>
+            <span>VisÃ£o Geral</span>
           </button>
 
           <button
@@ -214,7 +214,7 @@ export default function DashboardPage() {
             }`}
           >
             <BarChart3 className="w-4 h-4 text-pink-400" />
-            <span>Relat{'\u00f3'}rios & Gr{'\u00e1'}ficos</span>
+            <span>RelatÃ³rios & GrÃ¡ficos</span>
           </button>
         </div>
 

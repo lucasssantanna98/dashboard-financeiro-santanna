@@ -261,7 +261,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
             {/* Observacoes */}
             <div>
               <label className="text-xs font-medium text-slate-400 mb-1 block">
-                Observa{'\u00e7'}{'\u00e3'}o (opcional):
+                ObservaÃ§Ã£o (opcional):
               </label>
               <input
                 type="text"
@@ -291,7 +291,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
               <input
                 type="text"
                 required
-                placeholder="Ex: Farmacia, Manutencao Carro, Supermercado..."
+                placeholder="Ex: FarmÃ¡cia, ManutenÃ§Ã£o Carro, Supermercado..."
                 value={billTitle}
                 onChange={(e) => setBillTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
@@ -324,10 +324,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 >
                   <option value="Moradia">Moradia</option>
                   <option value="Transporte">Transporte</option>
-                  <option value="Alimenta{'\u00e7'}{'\u00e3'}o">Alimenta{'\u00e7'}{'\u00e3'}o</option>
-                  <option value="Servi{'\u00e7'}os">Servi{'\u00e7'}os</option>
+                  <option value="AlimentaÃ§Ã£o">AlimentaÃ§Ã£o</option>
+                  <option value="ServiÃ§os">ServiÃ§os</option>
                   <option value="Financeiro">Financeiro</option>
-                  <option value="Sa{'\u00fa'}de">Sa{'\u00fa'}de</option>
+                  <option value="SaÃºde">SaÃºde</option>
                   <option value="Geral">Geral</option>
                 </select>
               </div>
@@ -355,7 +355,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   className="w-full px-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-emerald-500"
                 >
                   <option value="pending">Pendente</option>
-                  <option value="paid">J{'\u00e1'} Pago</option>
+                  <option value="paid">JÃ¡ Pago</option>
                 </select>
               </div>
             </div>
@@ -369,7 +369,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 className="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700"
               />
               <label htmlFor="billIsFixed" className="text-xs text-slate-300">
-                {'\u00c9'} uma conta fixa mensal (recorrente)?
+                Ã‰ uma conta fixa mensal (recorrente)?
               </label>
             </div>
 

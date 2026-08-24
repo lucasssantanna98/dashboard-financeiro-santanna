@@ -24,7 +24,7 @@ export function formatDate(dateString?: string): string {
 }
 
 const MONTH_NAMES = [
-  'Janeiro', 'Fevereiro', 'Mar\u00e7o', 'Abril', 'Maio', 'Junho',
+  'Janeiro', 'Fevereiro', 'MarÃ§o', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
@@ -66,7 +66,7 @@ export interface SourceMeta {
 export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
   ARQDIGITAL: {
     code: 'ARQDIGITAL',
-    name: 'ArqDigital (Sal\u00e1rio)',
+    name: 'ArqDigital (SalÃ¡rio)',
     person: 'Lucas',
     color: '#38bdf8',
     bgLight: 'rgba(56, 189, 248, 0.15)',

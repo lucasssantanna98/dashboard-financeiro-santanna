@@ -41,7 +41,7 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
         <div className="absolute -right-6 -top-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl group-hover:bg-cyan-500/20 transition-all"></div>
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Total Recebido (M{'\u00ea'}s)
+            Total Recebido (MÃªs)
           </span>
           <div className="p-2 rounded-xl bg-cyan-950/80 border border-cyan-800/40 text-cyan-400">
             <TrendingUp className="w-4 h-4" />
@@ -103,7 +103,7 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
         <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full blur-xl transition-all ${netBalance >= 0 ? 'bg-emerald-500/15 group-hover:bg-emerald-500/25' : 'bg-red-500/15'}`}></div>
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Saldo / Sobra L{'\u00ed'}quida
+            Saldo / Sobra LÃ­quida
           </span>
           <div className={`p-2 rounded-xl border ${netBalance >= 0 ? 'bg-emerald-950/80 border-emerald-800/40 text-emerald-400' : 'bg-red-950/80 border-red-800/40 text-red-400'}`}>
             <Wallet className="w-4 h-4" />
@@ -127,7 +127,7 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
         <div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all"></div>
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Proje{'\u00e7'}{'\u00e3'}o Fim do M{'\u00ea'}s
+            ProjeÃ§Ã£o Fim do MÃªs
           </span>
           <div className="p-2 rounded-xl bg-purple-950/80 border border-purple-800/40 text-purple-400">
             <Target className="w-4 h-4" />

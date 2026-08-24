@@ -121,7 +121,7 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
               <Briefcase className="w-5 h-5 text-sky-400" />
               <div>
                 <h3 className="text-sm font-bold text-white">Renda Fixa Mensal</h3>
-                <p className="text-xs text-slate-400">Sal{'\u00e1'}rio / Contratos Mensais</p>
+                <p className="text-xs text-slate-400">SalÃ¡rio / Contratos Mensais</p>
               </div>
             </div>
             <span className="text-xs font-bold text-sky-400 bg-sky-950/60 border border-sky-800/40 px-2.5 py-1 rounded-full">
@@ -248,7 +248,7 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
                   </div>
                 ) : (
                   <div className="py-6 text-center text-xs text-slate-500 italic">
-                    Nenhum lan{'\u00e7'}amento nesta semana.
+                    Nenhum lanÃ§amento nesta semana.
                   </div>
                 )}
               </div>

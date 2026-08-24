@@ -1,4 +1,4 @@
-﻿export type IncomeSource = 'ARQDIGITAL' | 'UBER_99' | 'STUDIO_LASH' | 'CM' | 'SC';
+export type IncomeSource = 'ARQDIGITAL' | 'UBER_99' | 'STUDIO_LASH' | 'CM' | 'SC';
 export type Person = 'Lucas' | 'Esposa';
 export type PeriodType = 'monthly' | 'weekly';
 export type BillStatus = 'pending' | 'paid';

@@ -1,4 +1,4 @@
-﻿# ðŸ’³ Dashboard Financeiro Sant'Anna
+# ðŸ’³ Dashboard Financeiro Sant'Anna
 
 Dashboard financeiro moderno e inteligente desenvolvido sob medida para **Lucas & Esposa**, integrando receitas semanais e mensais com checklist de contas e despesas da famÃ­lia.
 

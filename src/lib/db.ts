@@ -1,4 +1,4 @@
-﻿import { supabase } from './supabase';
+import { supabase } from './supabase';
 import { Income, MonthlyBill, BillTemplate, DashboardSummary, IncomeSource, Person } from '@/types';
 import { INITIAL_INCOMES, INITIAL_BILLS, INITIAL_BILL_TEMPLATES } from './mockData';
 

@@ -1,4 +1,4 @@
-﻿import { Income, MonthlyBill, BillTemplate } from '@/types';
+import { Income, MonthlyBill, BillTemplate } from '@/types';
 import { getCurrentMonthYear } from './utils';
 
 const currentMonth = getCurrentMonthYear();

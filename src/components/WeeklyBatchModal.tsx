@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, CalendarRange, Sparkles } from 'lucide-react';
+import { X, CalendarRange, Sparkles, Car, Eye, Gem } from 'lucide-react';
 import { IncomeSource, Person } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 
@@ -77,7 +77,7 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
                 Fechamento Semanal em Lote
               </h2>
               <p className="text-xs text-slate-400">
-                Preencha todos os ganhos da semana de uma sÃ³ vez
+                Preencha todos os ganhos da semana de uma s{'\u00f3'} vez
               </p>
             </div>
           </div>
@@ -95,7 +95,7 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
           {/* Seletor de Semana */}
           <div>
             <label className="text-xs font-medium text-slate-400 mb-2 block">
-              Escolha a Semana do MÃªs:
+              Escolha a Semana do M{'\u00ea'}s:
             </label>
             <div className="grid grid-cols-5 gap-2">
               {[1, 2, 3, 4, 5].map((w) => (
@@ -126,7 +126,8 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
 
             <div>
               <label className="text-xs text-slate-300 mb-1 flex items-center gap-1.5">
-                <span>ðŸš— Uber / 99:</span>
+                <Car className="w-4 h-4 text-blue-400" />
+                <span>Uber / 99:</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
@@ -155,8 +156,8 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-xs text-slate-300 mb-1 block">
-                  ðŸ‘ï¸ Studio Lash:
+                <label className="text-xs text-slate-300 mb-1 flex items-center gap-1">
+                  <Eye className="w-3.5 h-3.5 text-pink-400" /> Studio Lash:
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
@@ -174,8 +175,8 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
               </div>
 
               <div>
-                <label className="text-xs text-slate-300 mb-1 block">
-                  ðŸ’… CM:
+                <label className="text-xs text-slate-300 mb-1 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-pink-400" /> CM:
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
@@ -193,8 +194,8 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
               </div>
 
               <div>
-                <label className="text-xs text-slate-300 mb-1 block">
-                  ðŸ’Ž SC:
+                <label className="text-xs text-slate-300 mb-1 flex items-center gap-1">
+                  <Gem className="w-3.5 h-3.5 text-fuchsia-400" /> SC:
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">

@@ -75,7 +75,6 @@ export default function DashboardPage() {
     loadData();
   }, [loadData]);
 
-  // Handlers para Receitas
   const handleAddIncome = async (data: {
     source: IncomeSource;
     person: Person;
@@ -88,7 +87,7 @@ export default function DashboardPage() {
   }) => {
     await createIncome(data);
     await loadData();
-    showToast('Entrada adicionada com sucesso! ðŸ’°');
+    showToast('Entrada adicionada com sucesso!');
   };
 
   const handleDeleteIncome = async (id: string) => {
@@ -104,10 +103,9 @@ export default function DashboardPage() {
   ) => {
     await saveWeeklyBatch(monthYear, weekNumber, entries);
     await loadData();
-    showToast(`Fechamento da Semana ${weekNumber} salvo com sucesso! ðŸš€`);
+    showToast(`Fechamento da Semana ${weekNumber} salvo com sucesso!`);
   };
 
-  // Handlers para Contas
   const handleAddBill = async (data: {
     title: string;
     category: string;
@@ -120,7 +118,7 @@ export default function DashboardPage() {
   }) => {
     await createMonthlyBill(data);
     await loadData();
-    showToast('Conta adicionada com sucesso! ðŸ§¾');
+    showToast('Conta adicionada com sucesso!');
   };
 
   const handleToggleBillStatus = async (id: string, currentStatus: BillStatus) => {
@@ -143,7 +141,7 @@ export default function DashboardPage() {
   const handleGenerateBills = async () => {
     await generateBillsFromTemplates(currentMonthYear);
     await loadData();
-    showToast('Contas recorrentes importadas com sucesso! âš¡');
+    showToast('Contas recorrentes importadas com sucesso!');
   };
 
   return (
@@ -169,7 +167,7 @@ export default function DashboardPage() {
         {/* KPI Top Cards */}
         <KpiCards summary={summary} />
 
-        {/* NavegaÃ§Ã£o por Abas Principais */}
+        {/* Navegacao por Abas Principais */}
         <div className="flex items-center gap-1.5 border-b border-slate-800/80 pb-px overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
@@ -180,7 +178,7 @@ export default function DashboardPage() {
             }`}
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span>VisÃ£o Geral</span>
+            <span>Vis{'\u00e3'}o Geral</span>
           </button>
 
           <button
@@ -216,11 +214,11 @@ export default function DashboardPage() {
             }`}
           >
             <BarChart3 className="w-4 h-4 text-pink-400" />
-            <span>RelatÃ³rios & GrÃ¡ficos</span>
+            <span>Relat{'\u00f3'}rios & Gr{'\u00e1'}ficos</span>
           </button>
         </div>
 
-        {/* ConteÃºdo DinÃ¢mico por Aba */}
+        {/* Conteudo Dinamico por Aba */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
             <IncomesSection

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Sparkles } from 'lucide-react';
+import { X, Sparkles, Briefcase, Car, Eye, Gem } from 'lucide-react';
 import { IncomeSource, Person, PeriodType } from '@/types';
 import { SOURCES_MAP, getWeekNumber } from '@/lib/utils';
 
@@ -62,6 +62,17 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
 
   const handleSelectPreset = (src: IncomeSource) => {
     setSelectedSource(src);
+  };
+
+  const getSourceIcon = (code: IncomeSource) => {
+    switch (code) {
+      case 'ARQDIGITAL': return <Briefcase className="w-5 h-5 text-sky-400" />;
+      case 'UBER_99': return <Car className="w-5 h-5 text-blue-400" />;
+      case 'STUDIO_LASH': return <Eye className="w-5 h-5 text-pink-400" />;
+      case 'CM': return <Sparkles className="w-5 h-5 text-pink-400" />;
+      case 'SC': return <Gem className="w-5 h-5 text-fuchsia-400" />;
+      default: return null;
+    }
   };
 
   const handleSubmitIncome = async (e: React.FormEvent) => {
@@ -161,7 +172,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
           </button>
         </div>
 
-        {/* CONTEÃšDO: ENTRADA RÃPIDA */}
+        {/* CONTEUDO: ENTRADA RAPIDA */}
         {tab === 'income' ? (
           <form onSubmit={handleSubmitIncome} className="mt-5 space-y-4">
             
@@ -182,11 +193,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                         borderColor: isSelected ? src.color : 'rgba(51, 65, 85, 0.6)',
                         backgroundColor: isSelected ? src.bgLight : 'rgba(15, 23, 42, 0.6)',
                       }}
-                      className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition ${
+                      className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-left transition ${
                         isSelected ? 'ring-1 ring-offset-0' : 'hover:border-slate-600'
                       }`}
                     >
-                      <span className="text-lg">{src.icon}</span>
+                      <div>{getSourceIcon(src.code)}</div>
                       <div className="overflow-hidden">
                         <div className="text-xs font-bold text-slate-100 truncate">
                           {src.name}
@@ -247,10 +258,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
               </div>
             </div>
 
-            {/* ObservaÃ§Ãµes */}
+            {/* Observacoes */}
             <div>
               <label className="text-xs font-medium text-slate-400 mb-1 block">
-                ObservaÃ§Ã£o (opcional):
+                Observa{'\u00e7'}{'\u00e3'}o (opcional):
               </label>
               <input
                 type="text"
@@ -261,7 +272,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
               />
             </div>
 
-            {/* BotÃ£o de Envio */}
+            {/* Botao de Envio */}
             <button
               type="submit"
               disabled={loading || !amount}
@@ -271,7 +282,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
             </button>
           </form>
         ) : (
-          /* CONTEÃšDO: CONTA / DESPESA */
+          /* CONTEUDO: CONTA / DESPESA */
           <form onSubmit={handleSubmitBill} className="mt-5 space-y-4">
             <div>
               <label className="text-xs font-medium text-slate-400 mb-1.5 block">
@@ -280,7 +291,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
               <input
                 type="text"
                 required
-                placeholder="Ex: FarmÃ¡cia, ManutenÃ§Ã£o Carro, Supermercado..."
+                placeholder="Ex: Farmacia, Manutencao Carro, Supermercado..."
                 value={billTitle}
                 onChange={(e) => setBillTitle(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-emerald-500"
@@ -313,10 +324,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 >
                   <option value="Moradia">Moradia</option>
                   <option value="Transporte">Transporte</option>
-                  <option value="AlimentaÃ§Ã£o">AlimentaÃ§Ã£o</option>
-                  <option value="ServiÃ§os">ServiÃ§os</option>
+                  <option value="Alimenta{'\u00e7'}{'\u00e3'}o">Alimenta{'\u00e7'}{'\u00e3'}o</option>
+                  <option value="Servi{'\u00e7'}os">Servi{'\u00e7'}os</option>
                   <option value="Financeiro">Financeiro</option>
-                  <option value="SaÃºde">SaÃºde</option>
+                  <option value="Sa{'\u00fa'}de">Sa{'\u00fa'}de</option>
                   <option value="Geral">Geral</option>
                 </select>
               </div>
@@ -343,8 +354,8 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                   onChange={(e) => setBillStatus(e.target.value as 'pending' | 'paid')}
                   className="w-full px-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-emerald-500"
                 >
-                  <option value="pending">â³ Pendente</option>
-                  <option value="paid">âœ… JÃ¡ Pago</option>
+                  <option value="pending">Pendente</option>
+                  <option value="paid">J{'\u00e1'} Pago</option>
                 </select>
               </div>
             </div>
@@ -358,7 +369,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 className="w-4 h-4 rounded text-emerald-500 bg-slate-900 border-slate-700"
               />
               <label htmlFor="billIsFixed" className="text-xs text-slate-300">
-                Ã‰ uma conta fixa mensal (recorrente)?
+                {'\u00c9'} uma conta fixa mensal (recorrente)?
               </label>
             </div>
 

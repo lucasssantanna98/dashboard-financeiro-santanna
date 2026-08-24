@@ -4,9 +4,14 @@ import React, { useState } from 'react';
 import { 
   Trash2, 
   Filter, 
-  TrendingUp
+  TrendingUp,
+  Briefcase,
+  Car,
+  Eye,
+  Sparkles,
+  Gem
 } from 'lucide-react';
-import { Income, Person } from '@/types';
+import { Income, Person, IncomeSource } from '@/types';
 import { SOURCES_MAP, formatCurrency, formatDate } from '@/lib/utils';
 
 interface IncomesSectionProps {
@@ -29,16 +34,26 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
     return i.person === filterPerson;
   });
 
-  // Agrupamento por Semanas (1 a 5) e Fixo
   const fixedIncomes = filteredIncomes.filter((i) => i.period_type === 'monthly');
   const weeklyIncomes = filteredIncomes.filter((i) => i.period_type === 'weekly');
 
   const weeks = [1, 2, 3, 4, 5];
 
+  const getSourceIcon = (code: IncomeSource) => {
+    switch (code) {
+      case 'ARQDIGITAL': return <Briefcase className="w-4 h-4 text-sky-400" />;
+      case 'UBER_99': return <Car className="w-4 h-4 text-blue-400" />;
+      case 'STUDIO_LASH': return <Eye className="w-4 h-4 text-pink-400" />;
+      case 'CM': return <Sparkles className="w-4 h-4 text-pink-400" />;
+      case 'SC': return <Gem className="w-4 h-4 text-fuchsia-400" />;
+      default: return null;
+    }
+  };
+
   return (
     <div className="space-y-6">
       
-      {/* Barra de Filtros e AÃ§Ãµes */}
+      {/* Barra de Filtros e Acoes */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
         
         {/* Filtro de Pessoa */}
@@ -80,13 +95,13 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
           </button>
         </div>
 
-        {/* BotÃµes RÃ¡pidos */}
+        {/* Botoes Rapidos */}
         <div className="flex items-center gap-2">
           <button
             onClick={onOpenWeeklyBatch}
             className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-pink-300 border border-pink-900/50 text-xs font-medium transition"
           >
-            ðŸ“… Fechamento Semanal
+            Fechamento Semanal
           </button>
           <button
             onClick={() => onOpenQuickAdd('income')}
@@ -98,15 +113,15 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
 
       </div>
 
-      {/* 1. SEÃ‡ÃƒO FIXA MENSAL (ARQDIGITAL) */}
+      {/* 1. SECAO FIXA MENSAL (ARQDIGITAL) */}
       {fixedIncomes.length > 0 && (
         <div className="glass-card p-5 rounded-2xl border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg">ðŸ’¼</span>
+              <Briefcase className="w-5 h-5 text-sky-400" />
               <div>
                 <h3 className="text-sm font-bold text-white">Renda Fixa Mensal</h3>
-                <p className="text-xs text-slate-400">SalÃ¡rio / Contratos Mensais</p>
+                <p className="text-xs text-slate-400">Sal{'\u00e1'}rio / Contratos Mensais</p>
               </div>
             </div>
             <span className="text-xs font-bold text-sky-400 bg-sky-950/60 border border-sky-800/40 px-2.5 py-1 rounded-full">
@@ -173,7 +188,7 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
                     : 'border-slate-800/40 bg-slate-950/40 opacity-70'
                 }`}
               >
-                {/* CabeÃ§alho da Semana */}
+                {/* Cabecalho da Semana */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3">
                   <div>
                     <span className="text-xs font-bold text-white">Semana {w}</span>
@@ -200,8 +215,8 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
                           key={item.id}
                           className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/90 border border-slate-800/80 group hover:border-slate-700 transition"
                         >
-                          <div className="flex items-center gap-2 overflow-hidden">
-                            <span className="text-base">{meta?.icon || 'ðŸ’µ'}</span>
+                          <div className="flex items-center gap-2.5 overflow-hidden">
+                            {getSourceIcon(item.source)}
                             <div className="truncate">
                               <div className="text-xs font-bold text-slate-200 truncate">
                                 {meta?.name || item.source}
@@ -233,7 +248,7 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
                   </div>
                 ) : (
                   <div className="py-6 text-center text-xs text-slate-500 italic">
-                    Nenhum lanÃ§amento nesta semana.
+                    Nenhum lan{'\u00e7'}amento nesta semana.
                   </div>
                 )}
               </div>

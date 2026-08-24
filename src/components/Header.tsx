@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  Sant&apos;Anna FinanÃ§as
+                  Sant&apos;Anna Finan{'\u00e7'}as
                 </h1>
                 <span className="text-[10px] uppercase font-semibold tracking-widest bg-cyan-950/60 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-800/40">
                   Casal
@@ -93,18 +93,18 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
 
-        {/* Seletor de MÃªs Central */}
+        {/* Seletor de Mes Central */}
         <div className="flex items-center justify-center gap-2 bg-slate-900/90 border border-slate-800 px-2 py-1 rounded-xl shadow-inner">
           <button
             onClick={handlePrevMonth}
             className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
-            title="MÃªs Anterior"
+            title="M\u00eas Anterior"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
           <div className="flex items-center gap-2 px-3">
-            <span className="text-sm font-semibold text-slate-100 min-w-[130px] text-center">
+            <span className="text-sm font-semibold text-slate-100 min-w-[140px] text-center">
               {getMonthName(currentMonthYear)}
             </span>
             {currentMonthYear !== currentActualMonth && (
@@ -120,20 +120,20 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={handleNextMonth}
             className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
-            title="PrÃ³ximo MÃªs"
+            title="Pr\u00f3ximo M\u00eas"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* AÃ§Ãµes RÃ¡pidas (Zero FricÃ§Ã£o) */}
+        {/* Acoes Rapidas */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
           <button
             onClick={() => onOpenQuickAdd('income')}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-cyan-600/20 transition active:scale-95 whitespace-nowrap"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Entrada RÃ¡pida</span>
+            <span>+ Entrada R{'\u00e1'}pida</span>
           </button>
 
           <button

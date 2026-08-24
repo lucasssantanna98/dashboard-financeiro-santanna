@@ -23,12 +23,17 @@ export function formatDate(dateString?: string): string {
   return dateString;
 }
 
+const MONTH_NAMES = [
+  'Janeiro', 'Fevereiro', 'Mar\u00e7o', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+];
+
 export function getMonthName(monthYear: string): string {
   if (!monthYear) return '';
   const [year, month] = monthYear.split('-');
-  const date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
-  const name = date.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-  return name.charAt(0).toUpperCase() + name.slice(1);
+  const monthIdx = parseInt(month, 10) - 1;
+  const name = MONTH_NAMES[monthIdx] || '';
+  return `${name} de ${year}`;
 }
 
 export function getCurrentMonthYear(): string {
@@ -55,19 +60,17 @@ export interface SourceMeta {
   color: string;
   bgLight: string;
   badgeBorder: string;
-  icon: string;
   defaultPeriod: 'monthly' | 'weekly';
 }
 
 export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
   ARQDIGITAL: {
     code: 'ARQDIGITAL',
-    name: 'ArqDigital (SalÃ¡rio)',
+    name: 'ArqDigital (Sal\u00e1rio)',
     person: 'Lucas',
     color: '#38bdf8',
     bgLight: 'rgba(56, 189, 248, 0.15)',
     badgeBorder: 'rgba(56, 189, 248, 0.4)',
-    icon: 'ðŸ’¼',
     defaultPeriod: 'monthly',
   },
   UBER_99: {
@@ -77,7 +80,6 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
     color: '#60a5fa',
     bgLight: 'rgba(96, 165, 250, 0.15)',
     badgeBorder: 'rgba(96, 165, 250, 0.4)',
-    icon: 'ðŸš—',
     defaultPeriod: 'weekly',
   },
   STUDIO_LASH: {
@@ -87,7 +89,6 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
     color: '#f472b6',
     bgLight: 'rgba(244, 114, 182, 0.15)',
     badgeBorder: 'rgba(244, 114, 182, 0.4)',
-    icon: 'ðŸ‘ï¸',
     defaultPeriod: 'weekly',
   },
   CM: {
@@ -97,7 +98,6 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
     color: '#ec4899',
     bgLight: 'rgba(236, 72, 153, 0.15)',
     badgeBorder: 'rgba(236, 72, 153, 0.4)',
-    icon: 'ðŸ’…',
     defaultPeriod: 'weekly',
   },
   SC: {
@@ -107,7 +107,6 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
     color: '#db2777',
     bgLight: 'rgba(219, 39, 119, 0.15)',
     badgeBorder: 'rgba(219, 39, 119, 0.4)',
-    icon: 'ðŸ’Ž',
     defaultPeriod: 'weekly',
   },
 };

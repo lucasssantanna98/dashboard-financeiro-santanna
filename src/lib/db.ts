@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+﻿import { supabase } from './supabase';
 import { Income, MonthlyBill, BillTemplate, DashboardSummary, IncomeSource, Person } from '@/types';
 import { INITIAL_INCOMES, INITIAL_BILLS, INITIAL_BILL_TEMPLATES } from './mockData';
 
@@ -307,7 +307,7 @@ export function calculateSummary(incomes: Income[], bills: MonthlyBill[]): Dashb
 
   const netBalance = totalIncome - totalExpenses;
 
-  // ProjeÃ§Ã£o mensal
+  // ProjeÃƒÂ§ÃƒÂ£o mensal
   const weeklyTotal = Object.values(weeklyBreakdown).reduce((acc, curr) => acc + curr.total, 0);
   const weeksWithData = Object.values(weeklyBreakdown).filter(w => w.total > 0).length || 1;
   const weeklyAverage = weeklyTotal / weeksWithData;
@@ -325,4 +325,14 @@ export function calculateSummary(incomes: Income[], bills: MonthlyBill[]): Dashb
     sourcesBreakdown,
     weeklyBreakdown,
   };
+}
+export async function deleteBillTemplate(id: string): Promise<void> {
+  try {
+    await supabase.from('bill_templates').delete().eq('id', id);
+  } catch (e) {
+    console.warn('Supabase deleteBillTemplate fallback:', e);
+  }
+  const list = getLocal<BillTemplate[]>('templates', INITIAL_BILL_TEMPLATES);
+  const updated = list.filter((t) => t.id !== id);
+  setLocal('templates', updated);
 }

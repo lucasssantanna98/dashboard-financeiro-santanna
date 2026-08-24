@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Trash2, PlusCircle, CheckCircle2 } from 'lucide-react';
 import { BillTemplate } from '@/types';
-import { fetchBillTemplates, createBillTemplate, deleteBillTemplate } from '@/lib/db';
+import { fetchBillTemplates, saveBillTemplate, deleteBillTemplate } from '@/lib/db';
 import { formatCurrency } from '@/lib/utils';
 
 interface TemplatesModalProps {
@@ -40,7 +40,7 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({ isOpen, onClose 
     if (!name || isNaN(numAmount) || numAmount < 0) return;
 
     setLoading(true);
-    await createBillTemplate({
+    await saveBillTemplate({
       name,
       category,
       default_amount: numAmount,

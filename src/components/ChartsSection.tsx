@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { BarChart3, PieChart } from 'lucide-react';
-import { DashboardSummary } from '@/types';
+import { BarChart3, PieChart, Briefcase, Car, Eye, Sparkles, Gem } from 'lucide-react';
+import { DashboardSummary, IncomeSource } from '@/types';
 import { SOURCES_MAP, formatCurrency } from '@/lib/utils';
 
 interface ChartsSectionProps {
@@ -14,10 +14,21 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
 
   const maxWeekly = Math.max(...Object.values(weeklyBreakdown).map(w => w.total), 1000);
 
+  const getSourceIcon = (code: string) => {
+    switch (code) {
+      case 'ARQDIGITAL': return <Briefcase className="w-3.5 h-3.5 text-sky-400" />;
+      case 'UBER_99': return <Car className="w-3.5 h-3.5 text-blue-400" />;
+      case 'STUDIO_LASH': return <Eye className="w-3.5 h-3.5 text-pink-400" />;
+      case 'CM': return <Sparkles className="w-3.5 h-3.5 text-pink-400" />;
+      case 'SC': return <Gem className="w-3.5 h-3.5 text-fuchsia-400" />;
+      default: return null;
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
-      {/* 1. EVOLUÃ‡ÃƒO SEMANAL (BARRAS COMPARATIVAS) */}
+      {/* 1. EVOLUCAO SEMANAL (BARRAS COMPARATIVAS) */}
       <div className="glass-card p-5 rounded-2xl border-slate-800 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -65,7 +76,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
         </div>
       </div>
 
-      {/* 2. DISTRIBUIÃ‡ÃƒO POR FONTE DE RENDA */}
+      {/* 2. DISTRIBUICAO POR FONTE DE RENDA */}
       <div className="glass-card p-5 rounded-2xl border-slate-800 space-y-4">
         <div className="flex items-center gap-2">
           <PieChart className="w-5 h-5 text-pink-400" />
@@ -81,7 +92,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
               <div key={key} className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="flex items-center gap-1.5 font-medium text-slate-300">
-                    <span>{src?.icon}</span>
+                    <span>{getSourceIcon(key)}</span>
                     <span>{src?.name}</span>
                   </span>
                   <div className="flex items-center gap-2">
@@ -90,10 +101,10 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
                   </div>
                 </div>
 
-                <div className="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
                   <div
-                    style={{ width: `${pct}%`, backgroundColor: src?.color || '#38bdf8' }}
-                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${pct}%`, backgroundColor: src?.color }}
+                    className="h-full transition-all duration-500"
                   ></div>
                 </div>
               </div>

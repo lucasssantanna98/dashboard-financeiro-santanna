@@ -9,7 +9,9 @@ import {
   CheckSquare, 
   Receipt,
   ListTodo,
-  CalendarClock
+  CalendarClock,
+  Filter,
+  Zap
 } from 'lucide-react';
 import { MonthlyBill, BillStatus } from '@/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -93,109 +95,123 @@ export const BillsSection: React.FC<BillsSectionProps> = ({
     );
   };
 
+  const totalPaid = bills.filter(b => b.status === 'paid').reduce((acc, curr) => acc + curr.amount, 0);
+  const totalPending = bills.filter(b => b.status === 'pending').reduce((acc, curr) => acc + curr.amount, 0);
+
   return (
     <div className="space-y-6">
       
-      {/* HEADER DE ACOES E FILTROS */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+      {/* CONTROLES SUPERIORES */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
         
-        <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-amber-950/50 border border-amber-900/30 text-amber-400">
-            <ListTodo className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-white tracking-tight">Checklist de Contas & Compromissos</h3>
-            <div className="flex gap-2 mt-1">
-              <button
-                onClick={() => setFilter('all')}
-                className={`text-xs font-semibold px-2.5 py-0.5 rounded-md transition ${filter === 'all' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
-              >
-                Todas
-              </button>
-              <button
-                onClick={() => setFilter('pending')}
-                className={`text-xs font-semibold px-2.5 py-0.5 rounded-md transition ${filter === 'pending' ? 'bg-amber-950/60 text-amber-400 border border-amber-900/40' : 'text-slate-400 hover:text-amber-400'}`}
-              >
-                Pendentes
-              </button>
-              <button
-                onClick={() => setFilter('paid')}
-                className={`text-xs font-semibold px-2.5 py-0.5 rounded-md transition ${filter === 'paid' ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-900/40' : 'text-slate-400 hover:text-emerald-400'}`}
-              >
-                Pagas
-              </button>
-            </div>
-          </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-slate-400 font-medium mr-1 flex items-center gap-1">
+            <Filter className="w-3.5 h-3.5" /> Exibir:
+          </span>
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${filter === 'all' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
+          >
+            Todas ({bills.length})
+          </button>
+          <button
+            onClick={() => setFilter('pending')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${filter === 'pending' ? 'bg-amber-950/60 text-amber-400 border border-amber-900/40' : 'text-slate-400 hover:text-amber-400'}`}
+          >
+            Pendentes
+          </button>
+          <button
+            onClick={() => setFilter('paid')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${filter === 'paid' ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-900/40' : 'text-slate-400 hover:text-emerald-400'}`}
+          >
+            Pagas
+          </button>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={onGenerateFromTemplates}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-900/30 text-xs font-medium transition whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-800/50 text-xs font-medium transition"
           >
-            <Copy className="w-3.5 h-3.5" />
-            Gerar Contas do MÃªs
+            <Zap className="w-3.5 h-3.5" />
+            <span>Gerar Contas do Mês</span>
           </button>
           <button
             onClick={() => onOpenQuickAdd('bill')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow transition whitespace-nowrap"
+            className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow transition"
           >
             + Nova Conta
           </button>
         </div>
       </div>
 
-      {/* LISTA DE CONTAS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredBills.length > 0 ? (
-          filteredBills.map((bill) => (
-            <div
-              key={bill.id}
-              className={`group flex flex-col p-4 rounded-2xl border transition-all ${
-                bill.status === 'paid'
-                  ? 'bg-slate-900/40 border-slate-800/60 opacity-80'
-                  : 'bg-slate-900/80 border-slate-700 shadow-sm hover:border-slate-600'
-              }`}
-            >
-              {/* Header do Card (Titulo e Badge) */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1 pr-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    {getStatusBadge(bill)}
-                  </div>
-                  <h4 className={`text-sm font-bold truncate ${bill.status === 'paid' ? 'text-slate-400 line-through' : 'text-white'}`}>
-                    {bill.title}
-                  </h4>
-                  <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                    <Receipt className="w-3 h-3" /> {bill.category}
-                    {bill.is_fixed && <span className="ml-1 px-1 bg-slate-800 rounded text-[9px] uppercase">Fixa</span>}
+      {/* CONTAINER PRINCIPAL DAS CONTAS */}
+      <div className="glass-card rounded-2xl border-slate-800 overflow-hidden">
+        
+        {/* Header da Tabela/Lista */}
+        <div className="p-4 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between text-xs">
+          <span className="font-bold text-slate-300">Checklist de Contas & Compromissos</span>
+          <div className="flex items-center gap-3">
+            <span className="text-emerald-400 font-semibold">Pago: {formatCurrency(totalPaid)}</span>
+            <span className="text-slate-600">|</span>
+            <span className="text-amber-400 font-semibold">Pendente: {formatCurrency(totalPending)}</span>
+          </div>
+        </div>
+
+        {/* LISTA DE CONTAS */}
+        <div className="divide-y divide-slate-800/50">
+          {filteredBills.length > 0 ? (
+            filteredBills.map((bill) => (
+              <div
+                key={bill.id}
+                className={`group flex items-center justify-between p-4 transition-all ${
+                  bill.status === 'paid'
+                    ? 'bg-slate-900/30 hover:bg-slate-900/50'
+                    : 'bg-slate-900/60 hover:bg-slate-800/80'
+                }`}
+              >
+                {/* Lado Esquerdo: Check, Info */}
+                <div className="flex items-center gap-4 flex-1">
+                  <button
+                    onClick={() => onToggleStatus(bill.id, bill.status)}
+                    className="shrink-0 p-1 -ml-1 text-slate-500 hover:scale-110 transition active:scale-95"
+                    title={bill.status === 'paid' ? 'Desmarcar' : 'Marcar como Pago'}
+                  >
+                    {bill.status === 'paid' ? (
+                      <CheckSquare className="w-6 h-6 text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                    ) : (
+                      <Circle className="w-6 h-6 hover:text-emerald-400" />
+                    )}
+                  </button>
+                  
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className={`text-sm font-bold ${bill.status === 'paid' ? 'text-slate-500 line-through' : 'text-slate-200'}`}>
+                        {bill.title}
+                      </h4>
+                      {getStatusBadge(bill)}
+                      {bill.is_fixed && <span className="px-1.5 py-0.5 bg-slate-800 text-slate-400 rounded text-[9px] font-bold uppercase tracking-widest border border-slate-700">Fixo</span>}
+                    </div>
+                    <div className="text-[11px] text-slate-500 flex items-center gap-3">
+                      <span className="flex items-center gap-1"><Receipt className="w-3 h-3" /> {bill.category}</span>
+                      <span className="flex items-center gap-1">
+                        <CalendarClock className="w-3 h-3" />
+                        Venc: <strong className={bill.status === 'pending' && bill.due_date <= today ? 'text-red-400' : 'text-slate-400'}>
+                          {formatDate(bill.due_date)}
+                        </strong>
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Botao de Checkmark */}
-                <button
-                  onClick={() => onToggleStatus(bill.id, bill.status)}
-                  className="p-1 -mr-1 -mt-1 text-slate-500 hover:scale-110 transition active:scale-95"
-                  title={bill.status === 'paid' ? 'Desmarcar' : 'Marcar como Pago'}
-                >
-                  {bill.status === 'paid' ? (
-                    <CheckSquare className="w-6 h-6 text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
-                  ) : (
-                    <Circle className="w-6 h-6 hover:text-emerald-400" />
-                  )}
-                </button>
-              </div>
-
-              {/* Informacoes Inferiores (Valor, Data, Acoes) */}
-              <div className="mt-auto pt-3 border-t border-slate-800/60 flex items-center justify-between">
-                
-                <div className="flex flex-col">
+                {/* Lado Direito: Valor, Acoes */}
+                <div className="flex items-center gap-4 pl-4 shrink-0">
                   {editingId === bill.id ? (
                     <input
                       type="number"
                       step="0.01"
                       autoFocus
-                      className="w-24 bg-slate-800 text-white text-sm font-bold px-2 py-1 rounded border border-emerald-500 focus:outline-none"
+                      className="w-24 bg-slate-950 text-white text-sm font-bold px-2 py-1.5 rounded border border-emerald-500 focus:outline-none shadow-inner"
                       value={editAmount}
                       onChange={(e) => setEditAmount(e.target.value)}
                       onBlur={() => handleSaveEdit(bill.id)}
@@ -204,8 +220,8 @@ export const BillsSection: React.FC<BillsSectionProps> = ({
                   ) : (
                     <span
                       onClick={() => bill.status === 'pending' && handleStartEdit(bill)}
-                      className={`text-lg font-extrabold cursor-text ${
-                        bill.status === 'paid' ? 'text-slate-500' : 'text-white hover:text-emerald-300 transition'
+                      className={`text-base font-extrabold cursor-text ${
+                        bill.status === 'paid' ? 'text-slate-600' : 'text-white hover:text-emerald-300 transition'
                       }`}
                       title={bill.status === 'pending' ? 'Clique para editar o valor' : ''}
                     >
@@ -213,34 +229,31 @@ export const BillsSection: React.FC<BillsSectionProps> = ({
                     </span>
                   )}
 
-                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                    <CalendarClock className="w-3 h-3" />
-                    Venc: <strong className={bill.status === 'pending' && bill.due_date <= today ? 'text-red-400' : 'text-slate-300'}>
-                      {formatDate(bill.due_date)}
-                    </strong>
-                  </span>
+                  <button
+                    onClick={() => onDeleteBill(bill.id)}
+                    className="p-2 rounded-lg bg-slate-800/50 text-slate-500 hover:text-red-400 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition"
+                    title="Excluir"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
-
-                {/* Excluir Botao */}
-                <button
-                  onClick={() => onDeleteBill(bill.id)}
-                  className="p-2 rounded-lg bg-slate-800/50 text-slate-500 hover:text-red-400 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition"
-                  title="Excluir"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-
               </div>
+            ))
+          ) : (
+            <div className="p-8 text-center text-sm text-slate-400 space-y-2">
+              <p>Nenhuma conta cadastrada para este mês.</p>
+              {filter === 'all' && (
+                <button
+                  onClick={onGenerateFromTemplates}
+                  className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition"
+                >
+                  ⚡ Importar Modelos Recorrentes
+                </button>
+              )}
             </div>
-          ))
-        ) : (
-          <div className="col-span-full py-12 text-center text-slate-500 bg-slate-900/30 rounded-2xl border border-slate-800 border-dashed">
-            <Receipt className="w-10 h-10 mx-auto text-slate-700 mb-2" />
-            <p className="text-sm">Nenhuma conta cadastrada para este mÃªs.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-
     </div>
   );
 };

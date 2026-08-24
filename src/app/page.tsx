@@ -1,21 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  fetchIncomes, 
-  createIncome, 
-  deleteIncome, 
-  saveWeeklyBatch,
-  fetchMonthlyBills, 
-  toggleBillStatus, 
-  updateBillAmount, 
-  createMonthlyBill, 
-  deleteMonthlyBill,
-  generateBillsFromTemplates,
-  calculateSummary 
-} from '@/lib/db';
-import { Income, MonthlyBill, DashboardSummary, BillStatus, IncomeSource, Person, PeriodType } from '@/types';
-import { getCurrentMonthYear } from '@/lib/utils';
+import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { KpiCards } from '@/components/KpiCards';
 import { IncomesSection } from '@/components/IncomesSection';
@@ -24,275 +9,198 @@ import { ChartsSection } from '@/components/ChartsSection';
 import { QuickAddModal } from '@/components/QuickAddModal';
 import { WeeklyBatchModal } from '@/components/WeeklyBatchModal';
 import { TemplatesModal } from '@/components/TemplatesModal';
-import { LayoutDashboard, TrendingUp, ReceiptText, BarChart3, CheckCircle2 } from 'lucide-react';
+import { LayoutDashboard, Wallet, LineChart } from 'lucide-react';
 
-export default function DashboardPage() {
+import { 
+  fetchDashboardData, 
+  deleteIncome, 
+  deleteMonthlyBill, 
+  updateMonthlyBillStatus, 
+  updateMonthlyBillAmount,
+  generateBillsFromTemplates 
+} from '@/lib/db';
+import { getCurrentMonthYear } from '@/lib/utils';
+import { Income, MonthlyBill, DashboardSummary, BillStatus } from '@/types';
+
+export default function Home() {
   const [currentMonthYear, setCurrentMonthYear] = useState(getCurrentMonthYear());
+  
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [bills, setBills] = useState<MonthlyBill[]>([]);
-  const [summary, setSummary] = useState<DashboardSummary>({
-    totalIncome: 0,
-    lucasIncome: 0,
-    nicollyIncome: 0,
-    totalExpenses: 0,
-    paidExpenses: 0,
-    pendingExpenses: 0,
-    netBalance: 0,
-    projection: 0,
-    sourcesBreakdown: { ARQDIGITAL: 0, UBER_99: 0, STUDIO_LASH: 0, CM: 0, SC: 0 },
-    weeklyBreakdown: { 1: { total: 0, lucas: 0, nicolly: 0 }, 2: { total: 0, lucas: 0, nicolly: 0 }, 3: { total: 0, lucas: 0, nicolly: 0 }, 4: { total: 0, lucas: 0, nicolly: 0 }, 5: { total: 0, lucas: 0, nicolly: 0 } },
-  });
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'incomes' | 'bills' | 'charts'>('overview');
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
-  const [quickAddTab, setQuickAddTab] = useState<'income' | 'bill'>('income');
+  const [quickAddTab, setQuickAddTab] = useState<'income'|'bill'>('income');
+  
   const [isWeeklyBatchOpen, setIsWeeklyBatchOpen] = useState(false);
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
+  const [activeTab, setActiveTab] = useState<'overview' | 'incomes' | 'bills' | 'charts'>('overview');
 
-  const loadData = useCallback(async () => {
-    setIsRefreshing(true);
+  const loadData = async (showRefresh = false) => {
+    if (showRefresh) setRefreshing(true);
+    else setLoading(true);
+
     try {
-      const [fetchedIncomes, fetchedBills] = await Promise.all([
-        fetchIncomes(currentMonthYear),
-        fetchMonthlyBills(currentMonthYear),
-      ]);
-      setIncomes(fetchedIncomes);
-      setBills(fetchedBills);
-      setSummary(calculateSummary(fetchedIncomes, fetchedBills));
+      const data = await fetchDashboardData(currentMonthYear);
+      setIncomes(data.incomes);
+      setBills(data.bills);
+      setSummary(data.summary);
+    } catch (e) {
+      console.error('Error loading data:', e);
     } finally {
-      setIsRefreshing(false);
+      setLoading(false);
+      setRefreshing(false);
     }
-  }, [currentMonthYear]);
+  };
 
   useEffect(() => {
     loadData();
-  }, [loadData]);
+  }, [currentMonthYear]);
 
-  const handleAddIncome = async (data: {
-    source: IncomeSource;
-    person: Person;
-    amount: number;
-    date: string;
-    month_year: string;
-    period_type: PeriodType;
-    week_number: number;
-    notes?: string;
-  }) => {
-    await createIncome(data);
-    await loadData();
-    showToast('Entrada adicionada com sucesso!');
+  const handleOpenQuickAdd = (tab: 'income' | 'bill' = 'income') => {
+    setQuickAddTab(tab);
+    setIsQuickAddOpen(true);
   };
 
-  const handleDeleteIncome = async (id: string) => {
-    await deleteIncome(id, currentMonthYear);
-    await loadData();
-    showToast('LanÃ§amento removido.');
+  const handleGenerateTemplates = async () => {
+    if(confirm('Gerar contas baseadas nos seus modelos para este mês?')) {
+      await generateBillsFromTemplates(currentMonthYear);
+      await loadData(true);
+    }
   };
 
-  const handleSaveWeeklyBatch = async (
-    monthYear: string,
-    weekNumber: number,
-    entries: Array<{ source: IncomeSource; person: Person; amount: number; notes?: string }>
-  ) => {
-    await saveWeeklyBatch(monthYear, weekNumber, entries);
-    await loadData();
-    showToast(`Fechamento da Semana ${weekNumber} salvo com sucesso!`);
-  };
-
-  const handleAddBill = async (data: {
-    title: string;
-    category: string;
-    amount: number;
-    due_date: string;
-    month_year: string;
-    is_fixed: boolean;
-    status: 'pending' | 'paid';
-    notes?: string;
-  }) => {
-    await createMonthlyBill(data);
-    await loadData();
-    showToast('Conta adicionada com sucesso!');
-  };
-
-  const handleToggleBillStatus = async (id: string, currentStatus: BillStatus) => {
-    await toggleBillStatus(id, currentStatus, currentMonthYear);
-    await loadData();
-  };
-
-  const handleUpdateBillAmount = async (id: string, newAmount: number) => {
-    await updateBillAmount(id, newAmount, currentMonthYear);
-    await loadData();
-    showToast('Valor da conta atualizado!');
-  };
-
-  const handleDeleteBill = async (id: string) => {
-    await deleteMonthlyBill(id, currentMonthYear);
-    await loadData();
-    showToast('Conta removida do mÃªs.');
-  };
-
-  const handleGenerateBills = async () => {
-    await generateBillsFromTemplates(currentMonthYear);
-    await loadData();
-    showToast('Contas recorrentes importadas com sucesso!');
-  };
+  if (loading && !summary) {
+    return (
+      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-slate-800 border-t-cyan-500 animate-spin"></div>
+          <p className="text-slate-400 text-sm font-semibold animate-pulse">Carregando painel...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#080c14] pb-20">
+    <div className="min-h-screen bg-[#080c14] text-slate-100 font-sans selection:bg-cyan-500/30">
       
-      {/* Header Sticky */}
-      <Header
+      {/* HEADER PRINCIPAL */}
+      <Header 
         currentMonthYear={currentMonthYear}
         onMonthChange={setCurrentMonthYear}
-        onOpenQuickAdd={(tab = 'income') => {
-          setQuickAddTab(tab);
-          setIsQuickAddOpen(true);
-        }}
+        onOpenQuickAdd={handleOpenQuickAdd}
         onOpenWeeklyBatch={() => setIsWeeklyBatchOpen(true)}
         onOpenTemplates={() => setIsTemplatesOpen(true)}
-        onRefresh={loadData}
-        isRefreshing={isRefreshing}
+        onRefresh={() => loadData(true)}
+        isRefreshing={refreshing}
       />
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8 space-y-8">
         
-        {/* KPI Top Cards */}
-        <KpiCards summary={summary} />
+        {/* KPI CARDS (RESUMO) */}
+        {summary && <KpiCards summary={summary} />}
 
-        {/* Navegacao por Abas Principais */}
-        <div className="flex items-center gap-1.5 border-b border-slate-800/80 pb-px overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-              activeTab === 'overview'
-                ? 'border-cyan-400 text-cyan-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <LayoutDashboard className="w-4 h-4" />
-            <span>VisÃ£o Geral</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('incomes')}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-              activeTab === 'incomes'
-                ? 'border-sky-400 text-sky-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4 text-sky-400" />
-            <span>Receitas & Entradas ({incomes.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('bills')}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-              activeTab === 'bills'
-                ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <ReceiptText className="w-4 h-4 text-emerald-400" />
-            <span>Contas & Gastos ({bills.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('charts')}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-              activeTab === 'charts'
-                ? 'border-pink-400 text-pink-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 text-pink-400" />
-            <span>RelatÃ³rios & GrÃ¡ficos</span>
-          </button>
+        {/* NAVEGACAO EM ABAS (MOBILE & DESKTOP) */}
+        <div className="border-b border-slate-800 overflow-x-auto hide-scrollbar">
+          <div className="flex items-center gap-6 min-w-max pb-px">
+            <button 
+              onClick={() => setActiveTab('overview')}
+              className={`flex items-center gap-2 pb-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'overview' ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
+            >
+              <LayoutDashboard className="w-4 h-4" /> Visão Geral
+            </button>
+            <button 
+              onClick={() => setActiveTab('incomes')}
+              className={`flex items-center gap-2 pb-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'incomes' ? 'border-sky-400 text-sky-400' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
+            >
+              <TrendingIcon /> Receitas & Entradas ({incomes.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('bills')}
+              className={`flex items-center gap-2 pb-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'bills' ? 'border-amber-400 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
+            >
+              <Wallet className="w-4 h-4" /> Contas & Gastos ({bills.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('charts')}
+              className={`flex items-center gap-2 pb-3 text-sm font-bold transition-all border-b-2 ${activeTab === 'charts' ? 'border-pink-400 text-pink-400' : 'border-transparent text-slate-400 hover:text-slate-300'}`}
+            >
+              <LineChart className="w-4 h-4" /> Relatórios & Gráficos
+            </button>
+          </div>
         </div>
 
-        {/* Conteudo Dinamico por Aba */}
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            <IncomesSection
-              incomes={incomes}
-              onDeleteIncome={handleDeleteIncome}
-              onOpenQuickAdd={(tab) => {
-                setQuickAddTab(tab || 'income');
-                setIsQuickAddOpen(true);
-              }}
-              onOpenWeeklyBatch={() => setIsWeeklyBatchOpen(true)}
-            />
-            <BillsSection
-              bills={bills}
-              currentMonthYear={currentMonthYear}
-              onToggleStatus={handleToggleBillStatus}
-              onUpdateAmount={handleUpdateBillAmount}
-              onDeleteBill={handleDeleteBill}
-              onGenerateFromTemplates={handleGenerateBills}
-              onOpenQuickAdd={(tab) => {
-                setQuickAddTab(tab || 'bill');
-                setIsQuickAddOpen(true);
-              }}
-            />
-          </div>
-        )}
+        {/* CONTEUDO DAS ABAS */}
+        <div className="animate-in fade-in duration-300 slide-in-from-bottom-4">
+          
+          {(activeTab === 'overview' || activeTab === 'incomes') && (
+            <div className="mb-8">
+              <IncomesSection 
+                incomes={incomes}
+                onDeleteIncome={async (id) => {
+                  if(confirm('Tem certeza que deseja excluir esta entrada?')) {
+                    await deleteIncome(id, currentMonthYear);
+                    await loadData(true);
+                  }
+                }}
+                onOpenQuickAdd={handleOpenQuickAdd}
+                onOpenWeeklyBatch={() => setIsWeeklyBatchOpen(true)}
+              />
+            </div>
+          )}
 
-        {activeTab === 'incomes' && (
-          <IncomesSection
-            incomes={incomes}
-            onDeleteIncome={handleDeleteIncome}
-            onOpenQuickAdd={(tab) => {
-              setQuickAddTab(tab || 'income');
-              setIsQuickAddOpen(true);
-            }}
-            onOpenWeeklyBatch={() => setIsWeeklyBatchOpen(true)}
-          />
-        )}
+          {(activeTab === 'overview' || activeTab === 'bills') && (
+            <div className="mb-8">
+              <BillsSection
+                bills={bills}
+                currentMonthYear={currentMonthYear}
+                onToggleStatus={async (id, status) => {
+                  await updateMonthlyBillStatus(id, status === 'pending' ? 'paid' : 'pending', currentMonthYear);
+                  await loadData(true);
+                }}
+                onUpdateAmount={async (id, amount) => {
+                  await updateMonthlyBillAmount(id, amount, currentMonthYear);
+                  await loadData(true);
+                }}
+                onDeleteBill={async (id) => {
+                  if(confirm('Tem certeza que deseja excluir esta conta?')) {
+                    await deleteMonthlyBill(id, currentMonthYear);
+                    await loadData(true);
+                  }
+                }}
+                onGenerateFromTemplates={handleGenerateTemplates}
+                onOpenQuickAdd={handleOpenQuickAdd}
+              />
+            </div>
+          )}
 
-        {activeTab === 'bills' && (
-          <BillsSection
-            bills={bills}
-            currentMonthYear={currentMonthYear}
-            onToggleStatus={handleToggleBillStatus}
-            onUpdateAmount={handleUpdateBillAmount}
-            onDeleteBill={handleDeleteBill}
-            onGenerateFromTemplates={handleGenerateBills}
-            onOpenQuickAdd={(tab) => {
-              setQuickAddTab(tab || 'bill');
-              setIsQuickAddOpen(true);
-            }}
-          />
-        )}
+          {(activeTab === 'overview' || activeTab === 'charts') && summary && (
+            <div className="mb-8">
+              <ChartsSection summary={summary} />
+            </div>
+          )}
 
-        {activeTab === 'charts' && (
-          <ChartsSection summary={summary} />
-        )}
+        </div>
 
       </main>
 
-      {/* Modais */}
-      <QuickAddModal
+      {/* MODALS */}
+      <QuickAddModal 
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
-        currentMonthYear={currentMonthYear}
         defaultTab={quickAddTab}
-        onAddIncome={handleAddIncome}
-        onAddBill={handleAddBill}
+        onSuccess={() => loadData(true)}
+        currentMonthYear={currentMonthYear}
       />
 
       <WeeklyBatchModal
         isOpen={isWeeklyBatchOpen}
         onClose={() => setIsWeeklyBatchOpen(false)}
+        onSuccess={() => loadData(true)}
         currentMonthYear={currentMonthYear}
-        onSaveBatch={handleSaveWeeklyBatch}
       />
 
       <TemplatesModal
@@ -300,14 +208,13 @@ export default function DashboardPage() {
         onClose={() => setIsTemplatesOpen(false)}
       />
 
-      {/* Toast Feedback Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-slate-900 border border-slate-700 text-white text-xs font-semibold rounded-2xl shadow-2xl animate-in slide-in-from-bottom-5 duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
     </div>
   );
 }
+
+const TrendingIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trending-up">
+    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+    <polyline points="16 7 22 7 22 13"></polyline>
+  </svg>
+);

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BarChart3, PieChart, Briefcase, Car, Eye, Sparkles, Gem } from 'lucide-react';
-import { DashboardSummary, IncomeSource } from '@/types';
+import { DashboardSummary } from '@/types';
 import { SOURCES_MAP, formatCurrency } from '@/lib/utils';
 
 interface ChartsSectionProps {
@@ -28,12 +28,12 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
-      {/* 1. EVOLUCAO SEMANAL (BARRAS COMPARATIVAS) */}
+      {/* 1. EVOLUÇÃO SEMANAL (BARRAS COMPARATIVAS) */}
       <div className="glass-card p-5 rounded-2xl border-slate-800 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-cyan-400" />
-            <h3 className="text-sm font-bold text-white">EvoluÃ§Ã£o por Semana</h3>
+            <h3 className="text-sm font-bold text-white">Evolução por Semana</h3>
           </div>
           <div className="flex items-center gap-3 text-xs">
             <span className="flex items-center gap-1 text-sky-400">
@@ -76,7 +76,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
         </div>
       </div>
 
-      {/* 2. DISTRIBUICAO POR FONTE DE RENDA */}
+      {/* 2. DISTRIBUIÇÃO POR FONTE DE RENDA */}
       <div className="glass-card p-5 rounded-2xl border-slate-800 space-y-4">
         <div className="flex items-center gap-2">
           <PieChart className="w-5 h-5 text-pink-400" />

@@ -24,7 +24,7 @@ export function formatDate(dateString?: string): string {
 }
 
 const MONTH_NAMES = [
-  'Janeiro', 'Fevereiro', 'MarÃ§o', 'Abril', 'Maio', 'Junho',
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
@@ -66,7 +66,7 @@ export interface SourceMeta {
 export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
   ARQDIGITAL: {
     code: 'ARQDIGITAL',
-    name: 'ArqDigital (SalÃ¡rio)',
+    name: 'ArqDigital (Salário)',
     person: 'Lucas',
     color: '#38bdf8',
     bgLight: 'rgba(56, 189, 248, 0.15)',
@@ -95,18 +95,18 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
     code: 'CM',
     name: 'CM',
     person: 'Nicolly',
-    color: '#ec4899',
-    bgLight: 'rgba(236, 72, 153, 0.15)',
-    badgeBorder: 'rgba(236, 72, 153, 0.4)',
+    color: '#fb7185',
+    bgLight: 'rgba(251, 113, 133, 0.15)',
+    badgeBorder: 'rgba(251, 113, 133, 0.4)',
     defaultPeriod: 'weekly',
   },
   SC: {
     code: 'SC',
     name: 'SC',
     person: 'Nicolly',
-    color: '#db2777',
-    bgLight: 'rgba(219, 39, 119, 0.15)',
-    badgeBorder: 'rgba(219, 39, 119, 0.4)',
+    color: '#e879f9',
+    bgLight: 'rgba(232, 121, 249, 0.15)',
+    badgeBorder: 'rgba(232, 121, 249, 0.4)',
     defaultPeriod: 'weekly',
   },
 };

@@ -1,15 +1,7 @@
 'use client';
 
 import React from 'react';
-import { 
-  TrendingUp, 
-  Receipt, 
-  Wallet, 
-  Target, 
-  CheckCircle2, 
-  Clock, 
-  Sparkles
-} from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, CalendarDays } from 'lucide-react';
 import { DashboardSummary } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 
@@ -18,134 +10,118 @@ interface KpiCardsProps {
 }
 
 export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
-  const {
-    totalIncome,
-    lucasIncome,
-    nicollyIncome,
-    totalExpenses,
-    paidExpenses,
-    pendingExpenses,
-    netBalance,
-    projection,
-  } = summary;
-
-  const lucasPct = totalIncome > 0 ? Math.round((lucasIncome / totalIncome) * 100) : 50;
-  const nicollyPct = totalIncome > 0 ? Math.round((nicollyIncome / totalIncome) * 100) : 50;
-  const savingsPct = totalIncome > 0 ? Math.max(0, Math.round((netBalance / totalIncome) * 100)) : 0;
+  const isPositive = summary.netBalance >= 0;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
       
-      {/* 1. TOTAL ENTRADAS */}
-      <div className="glass-card p-4 sm:p-5 rounded-2xl relative overflow-hidden group border-slate-800">
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl group-hover:bg-cyan-500/20 transition-all"></div>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Total Recebido (MÃªs)
-          </span>
-          <div className="p-2 rounded-xl bg-cyan-950/80 border border-cyan-800/40 text-cyan-400">
-            <TrendingUp className="w-4 h-4" />
-          </div>
+      {/* TOTAL RECEBIDO */}
+      <div className="glass-card p-5 sm:p-6 rounded-3xl border-slate-800 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <TrendingUp className="w-24 h-24 text-cyan-400" />
         </div>
-
-        <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          {formatCurrency(totalIncome)}
-        </div>
-
-        {/* Divisao Lucas vs Nicolly */}
-        <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-            <span className="text-slate-400">Lucas:</span>
-            <span className="font-semibold text-sky-300">{formatCurrency(lucasIncome)}</span>
-            <span className="text-[10px] text-slate-500">({lucasPct}%)</span>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[11px] sm:text-xs font-bold text-slate-400 tracking-widest uppercase">
+              Total Recebido (Mês)
+            </h3>
+            <div className="p-2 bg-cyan-950/50 text-cyan-400 rounded-xl border border-cyan-900/50">
+              <TrendingUp className="w-4 h-4" />
+            </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-pink-400"></span>
-            <span className="text-slate-400">Nicolly:</span>
-            <span className="font-semibold text-pink-300">{formatCurrency(nicollyIncome)}</span>
-            <span className="text-[10px] text-slate-500">({nicollyPct}%)</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. TOTAL CONTAS & GASTOS */}
-      <div className="glass-card p-4 sm:p-5 rounded-2xl relative overflow-hidden group border-slate-800">
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all"></div>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Contas & Gastos
-          </span>
-          <div className="p-2 rounded-xl bg-amber-950/80 border border-amber-800/40 text-amber-400">
-            <Receipt className="w-4 h-4" />
-          </div>
-        </div>
-
-        <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          {formatCurrency(totalExpenses)}
-        </div>
-
-        {/* Status Pago vs Pendente */}
-        <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-1 text-emerald-400 font-medium">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Pago: {formatCurrency(paidExpenses)}</span>
-          </div>
-          <div className="flex items-center gap-1 text-amber-400 font-medium">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Pendente: {formatCurrency(pendingExpenses)}</span>
+          <p className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2 drop-shadow-sm">
+            {formatCurrency(summary.totalIncome)}
+          </p>
+          <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
+            <span className="flex items-center gap-1.5 text-sky-400 bg-sky-950/30 px-2 py-0.5 rounded-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+              {formatCurrency(summary.sourcesBreakdown['ARQDIGITAL'] || 0 + summary.sourcesBreakdown['UBER_99'] || 0)}
+              <span className="text-[10px] text-sky-500/80">({summary.totalIncome > 0 ? Math.round(((summary.sourcesBreakdown['ARQDIGITAL'] || 0 + summary.sourcesBreakdown['UBER_99'] || 0) / summary.totalIncome) * 100) : 0}%)</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-pink-400 bg-pink-950/30 px-2 py-0.5 rounded-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
+              Nicolly: {formatCurrency(summary.sourcesBreakdown['STUDIO_LASH'] || 0 + summary.sourcesBreakdown['CM'] || 0 + summary.sourcesBreakdown['SC'] || 0)}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* 3. SALDO LIQUIDO / SOBRA */}
-      <div className={`glass-card p-4 sm:p-5 rounded-2xl relative overflow-hidden group border-slate-800 ${netBalance >= 0 ? 'glow-emerald' : ''}`}>
-        <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full blur-xl transition-all ${netBalance >= 0 ? 'bg-emerald-500/15 group-hover:bg-emerald-500/25' : 'bg-red-500/15'}`}></div>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Saldo / Sobra LÃ­quida
-          </span>
-          <div className={`p-2 rounded-xl border ${netBalance >= 0 ? 'bg-emerald-950/80 border-emerald-800/40 text-emerald-400' : 'bg-red-950/80 border-red-800/40 text-red-400'}`}>
-            <Wallet className="w-4 h-4" />
+      {/* CONTAS & GASTOS */}
+      <div className="glass-card p-5 sm:p-6 rounded-3xl border-slate-800 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Wallet className="w-24 h-24 text-amber-400" />
+        </div>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[11px] sm:text-xs font-bold text-slate-400 tracking-widest uppercase">
+              Contas & Gastos
+            </h3>
+            <div className="p-2 bg-amber-950/50 text-amber-400 rounded-xl border border-amber-900/50">
+              <Wallet className="w-4 h-4" />
+            </div>
           </div>
-        </div>
-
-        <div className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${netBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-          {formatCurrency(netBalance)}
-        </div>
-
-        <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span>Margem do Casal:</span>
-          <span className={`font-semibold px-2 py-0.5 rounded-full ${netBalance >= 0 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' : 'bg-red-950 text-red-300 border border-red-800/40'}`}>
-            {savingsPct}% livre
-          </span>
+          <p className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-2 drop-shadow-sm">
+            {formatCurrency(summary.totalBills)}
+          </p>
+          <div className="flex items-center gap-3 text-xs font-medium mt-3">
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <span className="p-0.5 rounded-full border border-emerald-400/30 bg-emerald-400/10">✓</span>
+              Pago: {formatCurrency(summary.paidBills)}
+            </span>
+            <span className="flex items-center gap-1.5 text-amber-400">
+              <span className="p-0.5 rounded-full border border-amber-400/30 bg-amber-400/10">⏳</span>
+              Pendente: {formatCurrency(summary.pendingBills)}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* 4. PROJECAO DE FECHAMENTO */}
-      <div className="glass-card p-4 sm:p-5 rounded-2xl relative overflow-hidden group border-slate-800">
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all"></div>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            ProjeÃ§Ã£o Fim do MÃªs
-          </span>
-          <div className="p-2 rounded-xl bg-purple-950/80 border border-purple-800/40 text-purple-400">
-            <Target className="w-4 h-4" />
+      {/* SALDO / SOBRA */}
+      <div className="glass-card p-5 sm:p-6 rounded-3xl border-slate-800 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Wallet className={`w-24 h-24 ${isPositive ? 'text-emerald-400' : 'text-red-400'}`} />
+        </div>
+        <div className="relative z-10 h-full flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[11px] sm:text-xs font-bold text-slate-400 tracking-widest uppercase">
+                Saldo / Sobra Líquida
+              </h3>
+              <div className={`p-2 rounded-xl border ${isPositive ? 'bg-emerald-950/50 text-emerald-400 border-emerald-900/50' : 'bg-red-950/50 text-red-400 border-red-900/50'}`}>
+                <Wallet className="w-4 h-4" />
+              </div>
+            </div>
+            <p className={`text-3xl sm:text-4xl font-extrabold tracking-tight drop-shadow-sm ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+              {formatCurrency(summary.netBalance)}
+            </p>
+          </div>
+          
+          <div className="flex items-center justify-between mt-4 p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+            <span className="text-xs font-semibold text-slate-400">Margem do Casal:</span>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${isPositive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+              {summary.totalIncome > 0 ? Math.round((summary.netBalance / summary.totalIncome) * 100) : 0}% livre
+            </span>
           </div>
         </div>
+      </div>
 
-        <div className="text-2xl sm:text-3xl font-extrabold text-purple-300 tracking-tight">
-          {formatCurrency(projection)}
+      {/* PROJECAO MES (OPCIONAL, OCUPA LINHA INTEIRA OU ENCAIXA) */}
+      <div className="md:col-span-3 glass-card p-4 sm:p-5 rounded-2xl border-purple-900/30 bg-purple-950/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-purple-900/40 text-purple-400 rounded-xl border border-purple-800/50">
+            <CalendarDays className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-[10px] font-bold text-purple-300/70 tracking-widest uppercase mb-0.5">
+              Projeção Fim do Mês
+            </h3>
+            <p className="text-xl font-extrabold text-purple-100">
+              {formatCurrency(summary.projectedIncome)}
+            </p>
+          </div>
         </div>
-
-        <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span className="flex items-center gap-1 text-slate-400">
-            <Sparkles className="w-3 h-3 text-purple-400" />
-            Estimativa de entradas:
-          </span>
-          <span className="font-semibold text-purple-300">
-            + {formatCurrency(Math.max(0, projection - totalExpenses))} livre
-          </span>
+        <div className="text-xs font-medium text-purple-300/80 bg-purple-950/40 px-3 py-2 rounded-lg border border-purple-900/30">
+          <span className="opacity-70">≈ Estimativa de entradas:</span> <strong className="text-purple-200">+ {formatCurrency(summary.projectedIncome - summary.totalIncome)} livre</strong>
         </div>
       </div>
 

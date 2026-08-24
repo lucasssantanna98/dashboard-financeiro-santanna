@@ -1,239 +1,203 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, CalendarRange, Sparkles, Car, Eye, Gem } from 'lucide-react';
-import { IncomeSource, Person } from '@/types';
-import { formatCurrency } from '@/lib/utils';
+import { X, CalendarRange, Save } from 'lucide-react';
+import { IncomeSource } from '@/types';
+import { SOURCES_MAP } from '@/lib/utils';
+import { createIncome } from '@/lib/db';
 
 interface WeeklyBatchModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: () => void;
   currentMonthYear: string;
-  onSaveBatch: (
-    monthYear: string,
-    weekNumber: number,
-    entries: Array<{ source: IncomeSource; person: Person; amount: number; notes?: string }>
-  ) => Promise<void>;
 }
 
 export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
   isOpen,
   onClose,
-  currentMonthYear,
-  onSaveBatch,
+  onSuccess,
+  currentMonthYear
 }) => {
   const [week, setWeek] = useState(1);
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [loading, setLoading] = useState(false);
+
+  // Valores para cada fonte semanal
   const [uber, setUber] = useState('');
-  const [studioLash, setStudioLash] = useState('');
+  const [lash, setLash] = useState('');
   const [cm, setCm] = useState('');
   const [sc, setSc] = useState('');
-  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const parseVal = (v: string) => parseFloat(v.replace(',', '.')) || 0;
-
-  const totalWeek = parseVal(uber) + parseVal(studioLash) + parseVal(cm) + parseVal(sc);
-
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (totalWeek <= 0) return;
-
     setLoading(true);
-    try {
-      const entries: Array<{ source: IncomeSource; person: Person; amount: number; notes?: string }> = [
-        { source: 'UBER_99', person: 'Lucas', amount: parseVal(uber), notes: `Semana ${week}` },
-        { source: 'STUDIO_LASH', person: 'Nicolly', amount: parseVal(studioLash), notes: `Semana ${week}` },
-        { source: 'CM', person: 'Nicolly', amount: parseVal(cm), notes: `Semana ${week}` },
-        { source: 'SC', person: 'Nicolly', amount: parseVal(sc), notes: `Semana ${week}` },
-      ];
 
-      await onSaveBatch(currentMonthYear, week, entries);
+    const entries = [
+      { code: 'UBER_99', val: parseFloat(uber.replace(',', '.')) },
+      { code: 'STUDIO_LASH', val: parseFloat(lash.replace(',', '.')) },
+      { code: 'CM', val: parseFloat(cm.replace(',', '.')) },
+      { code: 'SC', val: parseFloat(sc.replace(',', '.')) },
+    ];
 
-      setUber('');
-      setStudioLash('');
-      setCm('');
-      setSc('');
-      onClose();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+    for (const entry of entries) {
+      if (!isNaN(entry.val) && entry.val > 0) {
+        await createIncome({
+          source_code: entry.code as IncomeSource,
+          amount: entry.val,
+          date,
+          week_number: week,
+          month_year: currentMonthYear,
+        });
+      }
     }
+
+    setLoading(false);
+    onSuccess();
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-[#0f172a] border border-slate-800 rounded-3xl p-6 shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-3xl p-6 shadow-2xl overflow-hidden">
         
-        {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-pink-950/80 border border-pink-800/40 text-pink-400">
-              <CalendarRange className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-white tracking-tight">
-                Fechamento Semanal em Lote
-              </h2>
-              <p className="text-xs text-slate-400">
-                Preencha todos os ganhos da semana de uma sÃ³ vez
-              </p>
-            </div>
-          </div>
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
-          >
+        <div className="flex justify-between items-start mb-6 relative z-10">
+          <div>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <CalendarRange className="w-6 h-6 text-cyan-400" />
+              Fechamento Semanal
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Registre a renda de todas as fontes semanais de uma só vez.
+            </p>
+          </div>
+          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white transition bg-slate-900 rounded-full border border-slate-800/80">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSave} className="mt-5 space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
           
-          {/* Seletor de Semana */}
-          <div>
-            <label className="text-xs font-medium text-slate-400 mb-2 block">
-              Escolha a Semana do MÃªs:
-            </label>
-            <div className="grid grid-cols-5 gap-2">
-              {[1, 2, 3, 4, 5].map((w) => (
-                <button
-                  key={w}
-                  type="button"
-                  onClick={() => setWeek(w)}
-                  className={`py-2 rounded-xl text-xs font-bold border transition ${
-                    week === w
-                      ? 'bg-cyan-500 text-white border-cyan-400 shadow-md shadow-cyan-500/25'
-                      : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
-                  }`}
-                >
-                  Semana {w}
-                </button>
-              ))}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Data do Fechamento</label>
+              <input
+                type="date"
+                required
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-cyan-500 transition"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Semana do Mês</label>
+              <select
+                value={week}
+                onChange={(e) => setWeek(Number(e.target.value))}
+                className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-cyan-500 transition"
+              >
+                <option value={1}>Semana 1</option>
+                <option value={2}>Semana 2</option>
+                <option value={3}>Semana 3</option>
+                <option value={4}>Semana 4</option>
+                <option value={5}>Semana 5+</option>
+              </select>
             </div>
           </div>
 
-          {/* Ganhos Lucas */}
-          <div className="p-4 rounded-2xl bg-sky-950/20 border border-sky-900/40 space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
-              <span className="text-xs font-bold text-sky-300 uppercase tracking-wider">
-                Lucas (Semana {week})
-              </span>
-            </div>
-
-            <div>
-              <label className="text-xs text-slate-300 mb-1 flex items-center gap-1.5">
-                <Car className="w-4 h-4 text-blue-400" />
-                <span>Uber / 99:</span>
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
-                  R$
-                </span>
+          <div className="space-y-3 pt-2">
+            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2">Entradas da Semana</h3>
+            
+            {/* Lucas: Uber/99 */}
+            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+              <div className="flex-1">
+                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['UBER_99'].name}</span>
+                <span className="text-[10px] text-sky-400 font-semibold uppercase">{SOURCES_MAP['UBER_99'].person}</span>
+              </div>
+              <div className="w-32 relative">
+                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
                 <input
                   type="number"
                   step="0.01"
                   placeholder="0,00"
                   value={uber}
-                  onChange={(e) => setUber(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm font-semibold focus:outline-none focus:border-sky-500"
+                  onChange={e => setUber(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-sky-500"
                 />
               </div>
             </div>
-          </div>
 
-          {/* Ganhos Nicolly */}
-          <div className="p-4 rounded-2xl bg-pink-950/20 border border-pink-900/40 space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-pink-400"></span>
-              <span className="text-xs font-bold text-pink-300 uppercase tracking-wider">
-                Nicolly (Semana {week})
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="text-xs text-slate-300 mb-1 flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5 text-pink-400" /> Studio Lash:
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
-                    R$
-                  </span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="0,00"
-                    value={studioLash}
-                    onChange={(e) => setStudioLash(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm font-semibold focus:outline-none focus:border-pink-500"
-                  />
-                </div>
+            {/* Nicolly: Studio Lash */}
+            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+              <div className="flex-1">
+                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['STUDIO_LASH'].name}</span>
+                <span className="text-[10px] text-pink-400 font-semibold uppercase">{SOURCES_MAP['STUDIO_LASH'].person}</span>
               </div>
-
-              <div>
-                <label className="text-xs text-slate-300 mb-1 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-pink-400" /> CM:
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
-                    R$
-                  </span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="0,00"
-                    value={cm}
-                    onChange={(e) => setCm(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm font-semibold focus:outline-none focus:border-pink-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs text-slate-300 mb-1 flex items-center gap-1">
-                  <Gem className="w-3.5 h-3.5 text-fuchsia-400" /> SC:
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
-                    R$
-                  </span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="0,00"
-                    value={sc}
-                    onChange={(e) => setSc(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-900/90 border border-slate-700 rounded-xl text-white text-sm font-semibold focus:outline-none focus:border-pink-500"
-                  />
-                </div>
+              <div className="w-32 relative">
+                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="0,00"
+                  value={lash}
+                  onChange={e => setLash(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-pink-500"
+                />
               </div>
             </div>
-          </div>
 
-          {/* Totalizador em Tempo Real */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-            <span className="text-xs text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              Total da Semana {week}:
-            </span>
-            <span className="text-base font-extrabold text-cyan-300">
-              {formatCurrency(totalWeek)}
-            </span>
+            {/* Nicolly: CM */}
+            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+              <div className="flex-1">
+                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['CM'].name}</span>
+                <span className="text-[10px] text-pink-400 font-semibold uppercase">{SOURCES_MAP['CM'].person}</span>
+              </div>
+              <div className="w-32 relative">
+                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="0,00"
+                  value={cm}
+                  onChange={e => setCm(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-pink-500"
+                />
+              </div>
+            </div>
+
+            {/* Nicolly: SC */}
+            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+              <div className="flex-1">
+                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['SC'].name}</span>
+                <span className="text-[10px] text-pink-400 font-semibold uppercase">{SOURCES_MAP['SC'].person}</span>
+              </div>
+              <div className="w-32 relative">
+                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="0,00"
+                  value={sc}
+                  onChange={e => setSc(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-pink-500"
+                />
+              </div>
+            </div>
+
           </div>
 
           <button
             type="submit"
-            disabled={loading || totalWeek <= 0}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-cyan-500 hover:from-pink-400 hover:to-cyan-400 disabled:opacity-50 text-white font-bold text-sm shadow-lg shadow-cyan-500/20 transition active:scale-[0.98]"
+            disabled={loading}
+            className="w-full mt-4 py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow-lg shadow-cyan-900/50 transition-all flex justify-center items-center gap-2"
           >
-            {loading ? 'Gravando...' : `Salvar Fechamento da Semana ${week}`}
+            {loading ? 'Salvando...' : <><Save className="w-4 h-4" /> Salvar Fechamento da Semana {week}</>}
           </button>
         </form>
-
       </div>
     </div>
   );

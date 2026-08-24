@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  Sant&apos;Anna FinanÃ§as
+                  Sant&apos;Anna Finanças
                 </h1>
                 <span className="text-[10px] uppercase font-semibold tracking-widest bg-cyan-950/60 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-800/40">
                   Casal
@@ -89,86 +89,84 @@ export const Header: React.FC<HeaderProps> = ({
             title="Atualizar dados"
             className="md:hidden p-2 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white transition"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
           </button>
         </div>
 
-        {/* Seletor de Mes Central */}
-        <div className="flex items-center justify-center gap-2 bg-slate-900/90 border border-slate-800 px-2 py-1 rounded-xl shadow-inner">
-          <button
-            onClick={handlePrevMonth}
-            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
-            title="MÃªs Anterior"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <div className="flex items-center gap-2 px-3">
-            <span className="text-sm font-semibold text-slate-100 min-w-[140px] text-center">
+        {/* Month Selector & Actions */}
+        <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 sm:gap-4">
+          
+          {/* Month Selector */}
+          <div className="flex items-center bg-slate-900/60 border border-slate-800 rounded-xl p-1 shadow-sm">
+            <button
+              onClick={handlePrevMonth}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              title="Mês Anterior"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <button 
+              onClick={handleCurrentMonth}
+              className="w-32 sm:w-40 text-center text-xs sm:text-sm font-bold text-slate-200 hover:text-white transition"
+              title="Ir para o mês atual"
+            >
               {getMonthName(currentMonthYear)}
-            </span>
-            {currentMonthYear !== currentActualMonth && (
-              <button
-                onClick={handleCurrentMonth}
-                className="text-[11px] bg-cyan-950 text-cyan-400 hover:bg-cyan-900 border border-cyan-800/50 px-2 py-0.5 rounded-md font-medium transition"
-              >
-                Hoje
-              </button>
-            )}
+            </button>
+            <button
+              onClick={handleNextMonth}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              title="Próximo Mês"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
           </div>
 
-          <button
-            onClick={handleNextMonth}
-            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition"
-            title="PrÃ³ximo MÃªs"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onOpenQuickAdd('income')}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold shadow-lg shadow-cyan-900/20 transition active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">+ Entrada Rápida</span>
+              <span className="sm:hidden">Entrada</span>
+            </button>
+
+            <button
+              onClick={onOpenWeeklyBatch}
+              title="Fechamento Semanal (Múltiplas Fontes)"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-900/30 text-xs font-medium transition active:scale-95"
+            >
+              <CalendarRange className="w-4 h-4" />
+              <span className="hidden sm:inline">Fechamento Semanal</span>
+            </button>
+
+            <button
+              onClick={() => onOpenQuickAdd('bill')}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-medium transition active:scale-95"
+            >
+              <ReceiptText className="w-4 h-4" />
+              <span className="hidden sm:inline">+ Conta</span>
+            </button>
+
+            <button
+              onClick={onOpenTemplates}
+              title="Configurar Modelos de Contas"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition active:scale-95"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={onRefresh}
+              title="Atualizar dados"
+              className="hidden md:flex p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-transparent transition active:scale-95"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            </button>
+          </div>
+
         </div>
-
-        {/* Acoes Rapidas */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
-          <button
-            onClick={() => onOpenQuickAdd('income')}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-cyan-600/20 transition active:scale-95 whitespace-nowrap"
-          >
-            <Plus className="w-4 h-4" />
-            <span>+ Entrada RÃ¡pida</span>
-          </button>
-
-          <button
-            onClick={onOpenWeeklyBatch}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 border border-slate-700/80 text-xs font-medium transition active:scale-95 whitespace-nowrap"
-          >
-            <CalendarRange className="w-3.5 h-3.5 text-pink-400" />
-            <span>Fechamento Semanal</span>
-          </button>
-
-          <button
-            onClick={() => onOpenQuickAdd('bill')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-200 border border-slate-700/80 text-xs font-medium transition active:scale-95 whitespace-nowrap"
-          >
-            <ReceiptText className="w-3.5 h-3.5 text-emerald-400" />
-            <span>+ Conta</span>
-          </button>
-
-          <button
-            onClick={onOpenTemplates}
-            title="Modelos Recorrentes"
-            className="p-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-400 hover:text-white border border-slate-700/80 text-xs transition"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={onRefresh}
-            title="Sincronizar"
-            className="hidden md:flex p-2 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 text-slate-400 hover:text-white border border-slate-700/80 text-xs transition"
-          >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
-          </button>
-        </div>
-
       </div>
     </header>
   );

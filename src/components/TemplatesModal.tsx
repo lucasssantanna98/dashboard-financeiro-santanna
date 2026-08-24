@@ -1,7 +1,7 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Save, Trash2, PlusCircle, CheckCircle2 } from 'lucide-react';
+import { X, Save, Trash2, PlusCircle } from 'lucide-react';
 import { BillTemplate } from '@/types';
 import { fetchBillTemplates, saveBillTemplate, deleteBillTemplate } from '@/lib/db';
 import { formatCurrency } from '@/lib/utils';
@@ -94,7 +94,7 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({ isOpen, onClose 
                   {tpl.is_fixed ? (
                     <span className="text-[9px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300 uppercase tracking-widest">Valor Fixo</span>
                   ) : (
-                    <span className="text-[9px] bg-amber-950/60 text-amber-500 border border-amber-900/40 px-1.5 py-0.5 rounded uppercase tracking-widest">Valor VariÃƒÂ¡vel</span>
+                    <span className="text-[9px] bg-amber-950/60 text-amber-500 border border-amber-900/40 px-1.5 py-0.5 rounded uppercase tracking-widest">Valor Variável</span>
                   )}
                 </h4>
                 <div className="text-xs text-slate-400 flex items-center gap-3 mt-1">
@@ -105,7 +105,7 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({ isOpen, onClose 
               
               <div className="flex items-center gap-4">
                 <span className="text-sm font-bold text-emerald-400">
-                  {tpl.is_fixed ? formatCurrency(tpl.default_amount) : `MÃƒÂ©dia: ${formatCurrency(tpl.default_amount)}`}
+                  {tpl.is_fixed ? formatCurrency(tpl.default_amount) : `Média: ${formatCurrency(tpl.default_amount)}`}
                 </span>
                 <button onClick={() => handleDelete(tpl.id)} className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition">
                   <Trash2 className="w-4 h-4" />
@@ -142,10 +142,10 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({ isOpen, onClose 
                   <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white">
                     <option>Moradia</option>
                     <option>Transporte</option>
-                    <option>AlimentaÃƒÂ§ÃƒÂ£o</option>
-                    <option>ServiÃƒÂ§os</option>
+                    <option>Alimentação</option>
+                    <option>Serviços</option>
                     <option>Financeiro</option>
-                    <option>SaÃƒÂºde</option>
+                    <option>Saúde</option>
                   </select>
                 </div>
                 <div>

@@ -249,7 +249,7 @@ export async function generateBillsFromTemplates(monthYear: string): Promise<Mon
 export function calculateSummary(incomes: Income[], bills: MonthlyBill[]): DashboardSummary {
   let totalIncome = 0;
   let lucasIncome = 0;
-  let esposaIncome = 0;
+  let nicollyIncome = 0;
 
   const sourcesBreakdown: Record<IncomeSource, number> = {
     ARQDIGITAL: 0,
@@ -259,12 +259,12 @@ export function calculateSummary(incomes: Income[], bills: MonthlyBill[]): Dashb
     SC: 0,
   };
 
-  const weeklyBreakdown: Record<number, { total: number; lucas: number; esposa: number }> = {
-    1: { total: 0, lucas: 0, esposa: 0 },
-    2: { total: 0, lucas: 0, esposa: 0 },
-    3: { total: 0, lucas: 0, esposa: 0 },
-    4: { total: 0, lucas: 0, esposa: 0 },
-    5: { total: 0, lucas: 0, esposa: 0 },
+  const weeklyBreakdown: Record<number, { total: number; lucas: number; nicolly: number }> = {
+    1: { total: 0, lucas: 0, nicolly: 0 },
+    2: { total: 0, lucas: 0, nicolly: 0 },
+    3: { total: 0, lucas: 0, nicolly: 0 },
+    4: { total: 0, lucas: 0, nicolly: 0 },
+    5: { total: 0, lucas: 0, nicolly: 0 },
   };
 
   incomes.forEach(i => {
@@ -274,7 +274,7 @@ export function calculateSummary(incomes: Income[], bills: MonthlyBill[]): Dashb
     if (i.person === 'Lucas') {
       lucasIncome += amt;
     } else {
-      esposaIncome += amt;
+      nicollyIncome += amt;
     }
 
     if (sourcesBreakdown[i.source] !== undefined) {
@@ -286,7 +286,7 @@ export function calculateSummary(incomes: Income[], bills: MonthlyBill[]): Dashb
       if (i.person === 'Lucas') {
         weeklyBreakdown[i.week_number].lucas += amt;
       } else {
-        weeklyBreakdown[i.week_number].esposa += amt;
+        weeklyBreakdown[i.week_number].nicolly += amt;
       }
     }
   });
@@ -316,7 +316,7 @@ export function calculateSummary(incomes: Income[], bills: MonthlyBill[]): Dashb
   return {
     totalIncome,
     lucasIncome,
-    esposaIncome,
+    nicollyIncome,
     totalExpenses,
     paidExpenses,
     pendingExpenses,

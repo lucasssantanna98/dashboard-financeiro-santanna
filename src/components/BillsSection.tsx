@@ -8,9 +8,6 @@ import {
   Edit3, 
   Check, 
   Zap, 
-  AlertCircle, 
-  Clock, 
-  Plus, 
   Filter
 } from 'lucide-react';
 import { MonthlyBill, BillStatus } from '@/types';
@@ -28,7 +25,6 @@ interface BillsSectionProps {
 
 export const BillsSection: React.FC<BillsSectionProps> = ({
   bills,
-  currentMonthYear,
   onToggleStatus,
   onUpdateAmount,
   onDeleteBill,

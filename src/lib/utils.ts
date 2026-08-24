@@ -51,7 +51,7 @@ export function getWeekNumber(dateStr?: string): number {
 export interface SourceMeta {
   code: IncomeSource;
   name: string;
-  person: 'Lucas' | 'Esposa';
+  person: 'Lucas' | 'Nicolly';
   color: string;
   bgLight: string;
   badgeBorder: string;
@@ -83,7 +83,7 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
   STUDIO_LASH: {
     code: 'STUDIO_LASH',
     name: 'Studio Lash',
-    person: 'Esposa',
+    person: 'Nicolly',
     color: '#f472b6',
     bgLight: 'rgba(244, 114, 182, 0.15)',
     badgeBorder: 'rgba(244, 114, 182, 0.4)',
@@ -93,7 +93,7 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
   CM: {
     code: 'CM',
     name: 'CM',
-    person: 'Esposa',
+    person: 'Nicolly',
     color: '#ec4899',
     bgLight: 'rgba(236, 72, 153, 0.15)',
     badgeBorder: 'rgba(236, 72, 153, 0.4)',
@@ -103,7 +103,7 @@ export const SOURCES_MAP: Record<IncomeSource, SourceMeta> = {
   SC: {
     code: 'SC',
     name: 'SC',
-    person: 'Esposa',
+    person: 'Nicolly',
     color: '#db2777',
     bgLight: 'rgba(219, 39, 119, 0.15)',
     badgeBorder: 'rgba(219, 39, 119, 0.4)',

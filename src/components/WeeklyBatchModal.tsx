@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, CalendarRange, Sparkles, CheckCircle } from 'lucide-react';
+import { X, CalendarRange, Sparkles } from 'lucide-react';
 import { IncomeSource, Person } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 
@@ -43,9 +43,9 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
     try {
       const entries: Array<{ source: IncomeSource; person: Person; amount: number; notes?: string }> = [
         { source: 'UBER_99', person: 'Lucas', amount: parseVal(uber), notes: `Semana ${week}` },
-        { source: 'STUDIO_LASH', person: 'Esposa', amount: parseVal(studioLash), notes: `Semana ${week}` },
-        { source: 'CM', person: 'Esposa', amount: parseVal(cm), notes: `Semana ${week}` },
-        { source: 'SC', person: 'Esposa', amount: parseVal(sc), notes: `Semana ${week}` },
+        { source: 'STUDIO_LASH', person: 'Nicolly', amount: parseVal(studioLash), notes: `Semana ${week}` },
+        { source: 'CM', person: 'Nicolly', amount: parseVal(cm), notes: `Semana ${week}` },
+        { source: 'SC', person: 'Nicolly', amount: parseVal(sc), notes: `Semana ${week}` },
       ];
 
       await onSaveBatch(currentMonthYear, week, entries);
@@ -144,12 +144,12 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
             </div>
           </div>
 
-          {/* Ganhos Esposa */}
+          {/* Ganhos Nicolly */}
           <div className="p-4 rounded-2xl bg-pink-950/20 border border-pink-900/40 space-y-3">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-pink-400"></span>
               <span className="text-xs font-bold text-pink-300 uppercase tracking-wider">
-                Esposa (Semana {week})
+                Nicolly (Semana {week})
               </span>
             </div>
 

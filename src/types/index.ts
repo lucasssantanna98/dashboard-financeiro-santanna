@@ -1,5 +1,5 @@
 export type IncomeSource = 'ARQDIGITAL' | 'UBER_99' | 'STUDIO_LASH' | 'CM' | 'SC';
-export type Person = 'Lucas' | 'Esposa';
+export type Person = 'Lucas' | 'Nicolly';
 export type PeriodType = 'monthly' | 'weekly';
 export type BillStatus = 'pending' | 'paid';
 
@@ -45,12 +45,12 @@ export interface MonthlyBill {
 export interface DashboardSummary {
   totalIncome: number;
   lucasIncome: number;
-  esposaIncome: number;
+  nicollyIncome: number;
   totalExpenses: number;
   paidExpenses: number;
   pendingExpenses: number;
   netBalance: number;
   projection: number;
   sourcesBreakdown: Record<IncomeSource, number>;
-  weeklyBreakdown: Record<number, { total: number; lucas: number; esposa: number }>;
+  weeklyBreakdown: Record<number, { total: number; lucas: number; nicolly: number }>;
 }

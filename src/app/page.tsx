@@ -33,14 +33,14 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary>({
     totalIncome: 0,
     lucasIncome: 0,
-    esposaIncome: 0,
+    nicollyIncome: 0,
     totalExpenses: 0,
     paidExpenses: 0,
     pendingExpenses: 0,
     netBalance: 0,
     projection: 0,
     sourcesBreakdown: { ARQDIGITAL: 0, UBER_99: 0, STUDIO_LASH: 0, CM: 0, SC: 0 },
-    weeklyBreakdown: { 1: { total: 0, lucas: 0, esposa: 0 }, 2: { total: 0, lucas: 0, esposa: 0 }, 3: { total: 0, lucas: 0, esposa: 0 }, 4: { total: 0, lucas: 0, esposa: 0 }, 5: { total: 0, lucas: 0, esposa: 0 } },
+    weeklyBreakdown: { 1: { total: 0, lucas: 0, nicolly: 0 }, 2: { total: 0, lucas: 0, nicolly: 0 }, 3: { total: 0, lucas: 0, nicolly: 0 }, 4: { total: 0, lucas: 0, nicolly: 0 }, 5: { total: 0, lucas: 0, nicolly: 0 } },
   });
 
   const [activeTab, setActiveTab] = useState<'overview' | 'incomes' | 'bills' | 'charts'>('overview');

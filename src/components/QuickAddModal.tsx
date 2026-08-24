@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Sparkles, PlusCircle } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import { IncomeSource, Person, PeriodType } from '@/types';
 import { SOURCES_MAP, getWeekNumber } from '@/lib/utils';
 
@@ -309,7 +309,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 <select
                   value={billCategory}
                   onChange={(e) => setBillCategory(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-emerald-500"
                 >
                   <option value="Moradia">Moradia</option>
                   <option value="Transporte">Transporte</option>

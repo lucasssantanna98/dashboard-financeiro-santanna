@@ -3,14 +3,10 @@
 import React, { useState } from 'react';
 import { 
   Trash2, 
-  Calendar, 
-  User, 
   Filter, 
-  Plus, 
-  Sparkles,
   TrendingUp
 } from 'lucide-react';
-import { Income, IncomeSource, Person } from '@/types';
+import { Income, Person } from '@/types';
 import { SOURCES_MAP, formatCurrency, formatDate } from '@/lib/utils';
 
 interface IncomesSectionProps {
@@ -72,15 +68,15 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
             Lucas
           </button>
           <button
-            onClick={() => setFilterPerson('Esposa')}
+            onClick={() => setFilterPerson('Nicolly')}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 ${
-              filterPerson === 'Esposa'
+              filterPerson === 'Nicolly'
                 ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40'
                 : 'text-slate-400 hover:text-pink-400 hover:bg-slate-800'
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
-            Esposa
+            Nicolly
           </button>
         </div>
 

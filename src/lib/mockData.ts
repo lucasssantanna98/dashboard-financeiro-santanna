@@ -16,13 +16,13 @@ export const INITIAL_BILL_TEMPLATES: BillTemplate[] = [
 export const INITIAL_INCOMES: Income[] = [
   { id: 'inc-1', date: `${currentMonth}-05`, month_year: currentMonth, source: 'ARQDIGITAL', person: 'Lucas', amount: 4500, period_type: 'monthly', notes: 'SalÃ¡rio Fixo' },
   { id: 'inc-2', date: `${currentMonth}-07`, month_year: currentMonth, source: 'UBER_99', person: 'Lucas', amount: 620, period_type: 'weekly', week_number: 1, notes: 'Semana 1' },
-  { id: 'inc-3', date: `${currentMonth}-07`, month_year: currentMonth, source: 'STUDIO_LASH', person: 'Esposa', amount: 1150, period_type: 'weekly', week_number: 1, notes: 'Semana 1' },
-  { id: 'inc-4', date: `${currentMonth}-07`, month_year: currentMonth, source: 'CM', person: 'Esposa', amount: 350, period_type: 'weekly', week_number: 1 },
-  { id: 'inc-5', date: `${currentMonth}-07`, month_year: currentMonth, source: 'SC', person: 'Esposa', amount: 280, period_type: 'weekly', week_number: 1 },
+  { id: 'inc-3', date: `${currentMonth}-07`, month_year: currentMonth, source: 'STUDIO_LASH', person: 'Nicolly', amount: 1150, period_type: 'weekly', week_number: 1, notes: 'Semana 1' },
+  { id: 'inc-4', date: `${currentMonth}-07`, month_year: currentMonth, source: 'CM', person: 'Nicolly', amount: 350, period_type: 'weekly', week_number: 1 },
+  { id: 'inc-5', date: `${currentMonth}-07`, month_year: currentMonth, source: 'SC', person: 'Nicolly', amount: 280, period_type: 'weekly', week_number: 1 },
   { id: 'inc-6', date: `${currentMonth}-14`, month_year: currentMonth, source: 'UBER_99', person: 'Lucas', amount: 740, period_type: 'weekly', week_number: 2 },
-  { id: 'inc-7', date: `${currentMonth}-14`, month_year: currentMonth, source: 'STUDIO_LASH', person: 'Esposa', amount: 1400, period_type: 'weekly', week_number: 2 },
-  { id: 'inc-8', date: `${currentMonth}-14`, month_year: currentMonth, source: 'CM', person: 'Esposa', amount: 420, period_type: 'weekly', week_number: 2 },
-  { id: 'inc-9', date: `${currentMonth}-14`, month_year: currentMonth, source: 'SC', person: 'Esposa', amount: 310, period_type: 'weekly', week_number: 2 },
+  { id: 'inc-7', date: `${currentMonth}-14`, month_year: currentMonth, source: 'STUDIO_LASH', person: 'Nicolly', amount: 1400, period_type: 'weekly', week_number: 2 },
+  { id: 'inc-8', date: `${currentMonth}-14`, month_year: currentMonth, source: 'CM', person: 'Nicolly', amount: 420, period_type: 'weekly', week_number: 2 },
+  { id: 'inc-9', date: `${currentMonth}-14`, month_year: currentMonth, source: 'SC', person: 'Nicolly', amount: 310, period_type: 'weekly', week_number: 2 },
 ];
 
 export const INITIAL_BILLS: MonthlyBill[] = [

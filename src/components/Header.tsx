@@ -78,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
                 <span className="text-slate-600">&bull;</span>
                 <span className="flex items-center gap-1 text-pink-400 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span> Esposa
+                  <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span> Nicolly
                 </span>
               </div>
             </div>

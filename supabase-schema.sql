@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS incomes (
   date DATE NOT NULL DEFAULT CURRENT_DATE,
   month_year VARCHAR(7) NOT NULL, -- Formato: 'YYYY-MM' (Ex: '2026-08')
   source VARCHAR(50) NOT NULL,    -- 'ARQDIGITAL', 'UBER_99', 'STUDIO_LASH', 'CM', 'SC'
-  person VARCHAR(20) NOT NULL,    -- 'Lucas' ou 'Esposa'
+  person VARCHAR(20) NOT NULL,    -- 'Lucas' ou 'Nicolly'
   amount DECIMAL(10,2) NOT NULL,
   period_type VARCHAR(20) NOT NULL DEFAULT 'weekly', -- 'monthly' ou 'weekly'
   week_number INT DEFAULT 1,      -- 1, 2, 3, 4, 5

@@ -21,7 +21,7 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
   const {
     totalIncome,
     lucasIncome,
-    esposaIncome,
+    nicollyIncome,
     totalExpenses,
     paidExpenses,
     pendingExpenses,
@@ -30,7 +30,7 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
   } = summary;
 
   const lucasPct = totalIncome > 0 ? Math.round((lucasIncome / totalIncome) * 100) : 50;
-  const esposaPct = totalIncome > 0 ? Math.round((esposaIncome / totalIncome) * 100) : 50;
+  const nicollyPct = totalIncome > 0 ? Math.round((nicollyIncome / totalIncome) * 100) : 50;
   const savingsPct = totalIncome > 0 ? Math.max(0, Math.round((netBalance / totalIncome) * 100)) : 0;
 
   return (
@@ -52,7 +52,7 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
           {formatCurrency(totalIncome)}
         </div>
 
-        {/* DivisÃ£o Lucas vs Esposa */}
+        {/* DivisÃ£o Lucas vs Nicolly */}
         <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-sky-400"></span>
@@ -62,9 +62,9 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-pink-400"></span>
-            <span className="text-slate-400">Esposa:</span>
-            <span className="font-semibold text-pink-300">{formatCurrency(esposaIncome)}</span>
-            <span className="text-[10px] text-slate-500">({esposaPct}%)</span>
+            <span className="text-slate-400">Nicolly:</span>
+            <span className="font-semibold text-pink-300">{formatCurrency(nicollyIncome)}</span>
+            <span className="text-[10px] text-slate-500">({nicollyPct}%)</span>
           </div>
         </div>
       </div>

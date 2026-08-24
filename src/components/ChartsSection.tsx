@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BarChart3, PieChart, TrendingUp, Sparkles } from 'lucide-react';
+import { BarChart3, PieChart } from 'lucide-react';
 import { DashboardSummary } from '@/types';
 import { SOURCES_MAP, formatCurrency } from '@/lib/utils';
 
@@ -10,7 +10,7 @@ interface ChartsSectionProps {
 }
 
 export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
-  const { weeklyBreakdown, sourcesBreakdown, totalIncome, totalExpenses, netBalance } = summary;
+  const { weeklyBreakdown, sourcesBreakdown, totalIncome } = summary;
 
   const maxWeekly = Math.max(...Object.values(weeklyBreakdown).map(w => w.total), 1000);
 
@@ -29,16 +29,16 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
               <span className="w-2 h-2 rounded-full bg-sky-400"></span> Lucas
             </span>
             <span className="flex items-center gap-1 text-pink-400">
-              <span className="w-2 h-2 rounded-full bg-pink-400"></span> Esposa
+              <span className="w-2 h-2 rounded-full bg-pink-400"></span> Nicolly
             </span>
           </div>
         </div>
 
         <div className="pt-4 pb-2 space-y-4">
           {[1, 2, 3, 4, 5].map((w) => {
-            const data = weeklyBreakdown[w] || { total: 0, lucas: 0, esposa: 0 };
+            const data = weeklyBreakdown[w] || { total: 0, lucas: 0, nicolly: 0 };
             const lucasWidth = maxWeekly > 0 ? (data.lucas / maxWeekly) * 100 : 0;
-            const esposaWidth = maxWeekly > 0 ? (data.esposa / maxWeekly) * 100 : 0;
+            const nicollyWidth = maxWeekly > 0 ? (data.nicolly / maxWeekly) * 100 : 0;
 
             return (
               <div key={w} className="space-y-1">
@@ -54,9 +54,9 @@ export const ChartsSection: React.FC<ChartsSectionProps> = ({ summary }) => {
                     title={`Lucas: ${formatCurrency(data.lucas)}`}
                   ></div>
                   <div
-                    style={{ width: `${esposaWidth}%` }}
+                    style={{ width: `${nicollyWidth}%` }}
                     className="h-full bg-gradient-to-r from-pink-500 to-pink-400 transition-all duration-500"
-                    title={`Esposa: ${formatCurrency(data.esposa)}`}
+                    title={`Nicolly: ${formatCurrency(data.nicolly)}`}
                   ></div>
                 </div>
               </div>

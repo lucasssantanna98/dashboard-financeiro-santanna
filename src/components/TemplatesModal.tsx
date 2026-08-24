@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, SlidersHorizontal, Plus, Trash2, Check } from 'lucide-react';
+import { X, SlidersHorizontal } from 'lucide-react';
 import { BillTemplate } from '@/types';
 import { fetchBillTemplates, saveBillTemplate } from '@/lib/db';
 import { formatCurrency } from '@/lib/utils';

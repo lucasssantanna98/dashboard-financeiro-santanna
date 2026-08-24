@@ -97,13 +97,11 @@ function calculateSummary(incomes: Income[], bills: MonthlyBill[]): DashboardSum
 
   return {
     totalIncome,
-    lucasIncome: 0, // mock property required by interface but unused in dashboard
-    nicollyIncome: 0,
-    totalExpenses: totalBills,
-    paidExpenses: paidBills,
-    pendingExpenses: pendingBills,
+    totalBills,
+    paidBills,
+    pendingBills,
     netBalance,
-    projection: projectedIncome,
+    projectedIncome,
     sourcesBreakdown: sourcesBreakdown as Record<IncomeSource, number>,
     weeklyBreakdown
   };

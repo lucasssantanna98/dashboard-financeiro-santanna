@@ -42,13 +42,11 @@ export interface MonthlyBill {
 
 export interface DashboardSummary {
   totalIncome: number;
-  lucasIncome: number;
-  nicollyIncome: number;
-  totalExpenses: number;
-  paidExpenses: number;
-  pendingExpenses: number;
+  totalBills: number;
+  paidBills: number;
+  pendingBills: number;
   netBalance: number;
-  projection: number;
+  projectedIncome: number;
   sourcesBreakdown: Record<IncomeSource, number>;
   weeklyBreakdown: Record<number, { total: number; lucas: number; nicolly: number }>;
 }

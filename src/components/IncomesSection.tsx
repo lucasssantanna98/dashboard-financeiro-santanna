@@ -19,9 +19,9 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
   onOpenWeeklyBatch
 }) => {
   // ArqDigital é renda fixa
-  const fixedIncomes = incomes.filter(i => SOURCES_MAP[i.source_code]?.defaultPeriod === 'monthly');
+  const fixedIncomes = incomes.filter(i => SOURCES_MAP[i.source_code as IncomeSource]?.defaultPeriod === 'monthly');
   // O resto é semanal
-  const weeklyIncomes = incomes.filter(i => SOURCES_MAP[i.source_code]?.defaultPeriod === 'weekly');
+  const weeklyIncomes = incomes.filter(i => SOURCES_MAP[i.source_code as IncomeSource]?.defaultPeriod === 'weekly');
 
   return (
     <div className="space-y-6">
@@ -49,7 +49,7 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
         <div className="divide-y divide-slate-800/50">
           {fixedIncomes.length > 0 ? (
             fixedIncomes.map(inc => {
-              const src = SOURCES_MAP[inc.source_code];
+              const src = SOURCES_MAP[inc.source_code as IncomeSource];
               return (
                 <div key={inc.id} className="p-4 flex items-center justify-between hover:bg-slate-900/30 transition group">
                   <div>

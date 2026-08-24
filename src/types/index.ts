@@ -8,10 +8,8 @@ export interface Income {
   created_at?: string;
   date: string;
   month_year: string;
-  source: IncomeSource;
-  person: Person;
+  source_code: IncomeSource;
   amount: number;
-  period_type: PeriodType;
   week_number?: number;
   notes?: string;
 }

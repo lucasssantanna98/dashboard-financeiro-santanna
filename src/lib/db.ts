@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
-import { Income, MonthlyBill, BillTemplate, DashboardSummary, IncomeSource, Person } from '@/types';
+import { Income, MonthlyBill, BillTemplate, DashboardSummary, IncomeSource, BillStatus } from '@/types';
 import { INITIAL_INCOMES, INITIAL_BILLS, INITIAL_BILL_TEMPLATES } from './mockData';
+import { SOURCES_MAP } from './utils';
 
 // Funções de Fallback LocalStorage
 const getLocal = <T>(key: string, fallback: T): T => {
@@ -24,8 +25,17 @@ export async function fetchDashboardData(monthYear: string) {
       supabase.from('monthly_bills').select('*').eq('month_year', monthYear).order('due_date', { ascending: true })
     ]);
 
-    if (incRes.data && incRes.data.length > 0) incomes = incRes.data as Income[];
-    if (billsRes.data && billsRes.data.length > 0) bills = billsRes.data as MonthlyBill[];
+    if (incRes.data && incRes.data.length > 0) {
+      // Map DB source -> Frontend source_code
+      incomes = incRes.data.map(d => ({
+        ...d,
+        source_code: d.source as IncomeSource
+      })) as Income[];
+    }
+    
+    if (billsRes.data && billsRes.data.length > 0) {
+      bills = billsRes.data as MonthlyBill[];
+    }
   } catch (e) {
     console.warn('Supabase fetch error, using fallback:', e);
   }
@@ -52,16 +62,13 @@ function calculateSummary(incomes: Income[], bills: MonthlyBill[]): DashboardSum
   
   const netBalance = totalIncome - totalBills;
 
-  // Projeção mensal simplificada (Renda fixa + média das 4 semanas projetada se o mês não acabou)
-  // Como é um dashboard simples, a projeção soma as rendas e joga *4 se for na semana 1, etc.
   let projectedIncome = 0;
   const fixedIncomes = incomes.filter(i => i.source_code === 'ARQDIGITAL').reduce((acc, curr) => acc + curr.amount, 0);
   const varIncomes = incomes.filter(i => i.source_code !== 'ARQDIGITAL');
   
   if (varIncomes.length > 0) {
-    const currentWeek = Math.max(...varIncomes.map(i => i.week_number));
+    const currentWeek = Math.max(...varIncomes.map(i => i.week_number || 1));
     const varTotal = varIncomes.reduce((acc, curr) => acc + curr.amount, 0);
-    // projeta varTotal baseado em 4 semanas
     projectedIncome = fixedIncomes + (currentWeek > 0 ? (varTotal / currentWeek) * 4 : 0);
   } else {
     projectedIncome = totalIncome;
@@ -75,26 +82,29 @@ function calculateSummary(incomes: Income[], bills: MonthlyBill[]): DashboardSum
     sourcesBreakdown[inc.source_code] = (sourcesBreakdown[inc.source_code] || 0) + inc.amount;
     
     // Weekly
-    if (!weeklyBreakdown[inc.week_number]) {
-      weeklyBreakdown[inc.week_number] = { total: 0, lucas: 0, nicolly: 0 };
+    const w = inc.week_number || 1;
+    if (!weeklyBreakdown[w]) {
+      weeklyBreakdown[w] = { total: 0, lucas: 0, nicolly: 0 };
     }
-    weeklyBreakdown[inc.week_number].total += inc.amount;
+    weeklyBreakdown[w].total += inc.amount;
     
     if (inc.source_code === 'ARQDIGITAL' || inc.source_code === 'UBER_99') {
-      weeklyBreakdown[inc.week_number].lucas += inc.amount;
+      weeklyBreakdown[w].lucas += inc.amount;
     } else {
-      weeklyBreakdown[inc.week_number].nicolly += inc.amount;
+      weeklyBreakdown[w].nicolly += inc.amount;
     }
   });
 
   return {
     totalIncome,
-    totalBills,
-    paidBills,
-    pendingBills,
+    lucasIncome: 0, // mock property required by interface but unused in dashboard
+    nicollyIncome: 0,
+    totalExpenses: totalBills,
+    paidExpenses: paidBills,
+    pendingExpenses: pendingBills,
     netBalance,
-    projectedIncome,
-    sourcesBreakdown,
+    projection: projectedIncome,
+    sourcesBreakdown: sourcesBreakdown as Record<IncomeSource, number>,
     weeklyBreakdown
   };
 }
@@ -107,8 +117,25 @@ export async function createIncome(income: Omit<Income, 'id' | 'created_at'>): P
   };
   
   try {
-    const { data, error } = await supabase.from('incomes').insert([income]).select();
-    if (!error && data && data[0]) return data[0] as Income;
+    const meta = SOURCES_MAP[income.source_code];
+    const dbPayload = {
+      date: income.date,
+      month_year: income.month_year,
+      source: income.source_code,
+      person: meta.person,
+      amount: income.amount,
+      period_type: meta.defaultPeriod,
+      week_number: income.week_number,
+      notes: income.notes
+    };
+
+    const { data, error } = await supabase.from('incomes').insert([dbPayload]).select();
+    if (!error && data && data[0]) {
+      return {
+        ...data[0],
+        source_code: data[0].source
+      } as Income;
+    }
   } catch (e) {
     console.warn('Supabase createIncome fallback:', e);
   }

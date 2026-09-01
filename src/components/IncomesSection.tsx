@@ -2,26 +2,32 @@
 
 import React from 'react';
 import { Briefcase, Building2, Trash2 } from 'lucide-react';
-import { Income } from '@/types';
-import { formatCurrency, SOURCES_MAP } from '@/lib/utils';
+import { Income, Person } from '@/types';
+import { formatCurrency } from '@/lib/utils';
 
 interface IncomesSectionProps {
   incomes: Income[];
   onDeleteIncome: (id: string) => Promise<void>;
   onOpenQuickAdd: (tab?: 'income' | 'bill') => void;
   onOpenWeeklyBatch: () => void;
+  incomeSources: { id: string; name: string; person: Person }[];
+  person1Name: string;
+  person2Name: string;
 }
 
 export const IncomesSection: React.FC<IncomesSectionProps> = ({ 
   incomes, 
   onDeleteIncome,
   onOpenQuickAdd,
-  onOpenWeeklyBatch
+  onOpenWeeklyBatch,
+  incomeSources,
+  person1Name,
+  person2Name
 }) => {
-  // ArqDigital é renda fixa
-  const fixedIncomes = incomes.filter(i => SOURCES_MAP[i.source_code]?.defaultPeriod === 'monthly');
+  // Se não temos mais flag de fixed/weekly, vamos colocar tudo no semanal, ou fixos se não tiver week_number
+  const fixedIncomes = incomes.filter(i => !i.week_number || i.source_code === 'ARQDIGITAL'); // fallback legacy
   // O resto é semanal
-  const weeklyIncomes = incomes.filter(i => SOURCES_MAP[i.source_code]?.defaultPeriod === 'weekly');
+  const weeklyIncomes = incomes.filter(i => i.week_number && i.source_code !== 'ARQDIGITAL');
 
   return (
     <div className="space-y-6">
@@ -49,18 +55,20 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
         <div className="divide-y divide-slate-800/50">
           {fixedIncomes.length > 0 ? (
             fixedIncomes.map(inc => {
-              const src = SOURCES_MAP[inc.source_code];
+              const srcObj = incomeSources.find(s => s.name === inc.source_code);
+              const p = srcObj?.person || 'person1';
+              const personDisplay = p === 'person1' ? person1Name : person2Name;
               return (
                 <div key={inc.id} className="p-4 flex items-center justify-between hover:bg-slate-900/30 transition group">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-sm text-slate-200">{src?.name}</span>
+                      <span className="font-bold text-sm text-slate-200">{inc.source_code}</span>
                     </div>
                     <div className="text-[10px] text-slate-500 flex items-center gap-1.5">
                       <span>{inc.date.split('-').reverse().join('/')}</span>
                       <span>&bull;</span>
-                      <span className="text-sky-400 font-semibold">{src?.person}</span>
-                      <span className="text-slate-600">(Salário Fixo)</span>
+                      <span className="text-sky-400 font-semibold">{personDisplay}</span>
+                      <span className="text-slate-600">(Fixo/Mensal)</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -89,7 +97,7 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
         <div className="flex items-center gap-2 mb-4 px-1">
           <TrendingIcon />
           <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest">
-            Entradas Semanais <span className="text-[10px] text-slate-500 font-medium normal-case tracking-normal">(UBER/99, STUDIO LASH, CM, SC)</span>
+            Entradas Semanais <span className="text-[10px] text-slate-500 font-medium normal-case tracking-normal">(Variável)</span>
           </h3>
         </div>
 
@@ -117,7 +125,9 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
                 {weekIncomes.length > 0 ? (
                   <div className="space-y-3">
                     {weekIncomes.map(inc => {
-                      const src = SOURCES_MAP[inc.source_code];
+                      const srcObj = incomeSources.find(s => s.name === inc.source_code);
+                      const p = srcObj?.person || 'person1';
+                      const personDisplay = p === 'person1' ? person1Name : person2Name;
                       return (
                         <div key={inc.id} className="flex items-center justify-between group">
                           <div className="flex items-center gap-2">
@@ -125,8 +135,8 @@ export const IncomesSection: React.FC<IncomesSectionProps> = ({
                               <Building2 className="w-3 h-3" />
                             </div>
                             <div>
-                              <p className="text-xs font-bold text-slate-300 leading-tight">{src?.name}</p>
-                              <p className="text-[9px] font-semibold text-slate-500 uppercase">{src?.person} &bull; Semana {inc.week_number}</p>
+                              <p className="text-xs font-bold text-slate-300 leading-tight">{inc.source_code}</p>
+                              <p className="text-[9px] font-semibold text-slate-500 uppercase">{personDisplay} &bull; Semana {inc.week_number}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">

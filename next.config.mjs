@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  experimental: {
+    serverComponentsExternalPackages: ['pg'],
+  },
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,

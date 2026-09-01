@@ -9,6 +9,7 @@ import { ChartsSection } from '@/components/ChartsSection';
 import { QuickAddModal } from '@/components/QuickAddModal';
 import { WeeklyBatchModal } from '@/components/WeeklyBatchModal';
 import { TemplatesModal } from '@/components/TemplatesModal';
+import { SettingsModal } from '@/components/SettingsModal';
 import { LayoutDashboard, Wallet, LineChart } from 'lucide-react';
 
 import { 
@@ -19,6 +20,7 @@ import {
   updateMonthlyBillAmount,
   generateBillsFromTemplates 
 } from '@/lib/db';
+import { getClientSession, logout } from '@/app/login/actions';
 import { getCurrentMonthYear } from '@/lib/utils';
 import { Income, MonthlyBill, DashboardSummary, BillStatus } from '@/types';
 
@@ -31,12 +33,14 @@ export default function Home() {
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [quickAddTab, setQuickAddTab] = useState<'income'|'bill'>('income');
   
   const [isWeeklyBatchOpen, setIsWeeklyBatchOpen] = useState(false);
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'incomes' | 'bills' | 'charts'>('overview');
 
@@ -59,6 +63,9 @@ export default function Home() {
 
   useEffect(() => {
     loadData();
+    getClientSession().then((session) => {
+      if (session?.role === 'admin') setIsAdmin(true);
+    });
   }, [currentMonthYear]);
 
   const handleOpenQuickAdd = (tab: 'income' | 'bill' = 'income') => {
@@ -94,8 +101,17 @@ export default function Home() {
         onOpenQuickAdd={handleOpenQuickAdd}
         onOpenWeeklyBatch={() => setIsWeeklyBatchOpen(true)}
         onOpenTemplates={() => setIsTemplatesOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
         onRefresh={() => loadData(true)}
         isRefreshing={refreshing}
+        isAdmin={isAdmin}
+        person1Name={summary?.person1Name}
+        person2Name={summary?.person2Name}
+        onLogout={async () => {
+          if (confirm('Deseja realmente sair?')) {
+            await logout();
+          }
+        }}
       />
 
       <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8 space-y-8">
@@ -148,6 +164,9 @@ export default function Home() {
                 }}
                 onOpenQuickAdd={handleOpenQuickAdd}
                 onOpenWeeklyBatch={() => setIsWeeklyBatchOpen(true)}
+                incomeSources={summary?.incomeSources || []}
+                person1Name={summary?.person1Name || 'Pessoa 1'}
+                person2Name={summary?.person2Name || 'Pessoa 2'}
               />
             </div>
           )}
@@ -194,6 +213,9 @@ export default function Home() {
         defaultTab={quickAddTab}
         onSuccess={() => loadData(true)}
         currentMonthYear={currentMonthYear}
+        incomeSources={summary?.incomeSources || []}
+        person1Name={summary?.person1Name || 'Pessoa 1'}
+        person2Name={summary?.person2Name || 'Pessoa 2'}
       />
 
       <WeeklyBatchModal
@@ -201,12 +223,26 @@ export default function Home() {
         onClose={() => setIsWeeklyBatchOpen(false)}
         onSuccess={() => loadData(true)}
         currentMonthYear={currentMonthYear}
+        incomeSources={summary?.incomeSources || []}
+        person1Name={summary?.person1Name || 'Pessoa 1'}
+        person2Name={summary?.person2Name || 'Pessoa 2'}
       />
 
       <TemplatesModal
         isOpen={isTemplatesOpen}
         onClose={() => setIsTemplatesOpen(false)}
       />
+
+      {summary && (
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onSuccess={() => loadData(true)}
+          person1Name={summary.person1Name}
+          person2Name={summary.person2Name}
+          incomeSources={summary.incomeSources}
+        />
+      )}
 
     </div>
   );

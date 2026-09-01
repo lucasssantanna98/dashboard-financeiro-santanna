@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, CalendarRange, Save } from 'lucide-react';
-import { IncomeSource } from '@/types';
-import { SOURCES_MAP } from '@/lib/utils';
+import { Person } from '@/types';
 import { createIncome } from '@/lib/db';
 
 interface WeeklyBatchModalProps {
@@ -11,23 +10,26 @@ interface WeeklyBatchModalProps {
   onClose: () => void;
   onSuccess: () => void;
   currentMonthYear: string;
+  incomeSources: { id: string; name: string; person: Person }[];
+  person1Name: string;
+  person2Name: string;
 }
 
 export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
-  currentMonthYear
+  currentMonthYear,
+  incomeSources,
+  person1Name,
+  person2Name
 }) => {
   const [week, setWeek] = useState(1);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
 
-  // Valores para cada fonte semanal
-  const [uber, setUber] = useState('');
-  const [lash, setLash] = useState('');
-  const [cm, setCm] = useState('');
-  const [sc, setSc] = useState('');
+  // Valores dinâmicos
+  const [values, setValues] = useState<Record<string, string>>({});
 
   if (!isOpen) return null;
 
@@ -35,18 +37,14 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
     e.preventDefault();
     setLoading(true);
 
-    const entries = [
-      { code: 'UBER_99', val: parseFloat(uber.replace(',', '.')) },
-      { code: 'STUDIO_LASH', val: parseFloat(lash.replace(',', '.')) },
-      { code: 'CM', val: parseFloat(cm.replace(',', '.')) },
-      { code: 'SC', val: parseFloat(sc.replace(',', '.')) },
-    ];
-
-    for (const entry of entries) {
-      if (!isNaN(entry.val) && entry.val > 0) {
+    for (const [sourceName, valStr] of Object.entries(values)) {
+      const val = parseFloat(valStr.replace(',', '.'));
+      if (!isNaN(val) && val > 0) {
+        const srcObj = incomeSources.find(s => s.name === sourceName);
         await createIncome({
-          source_code: entry.code as IncomeSource,
-          amount: entry.val,
+          source_code: sourceName,
+          person: srcObj?.person || 'person1',
+          amount: val,
           date,
           week_number: week,
           month_year: currentMonthYear,
@@ -112,81 +110,31 @@ export const WeeklyBatchModal: React.FC<WeeklyBatchModalProps> = ({
           <div className="space-y-3 pt-2">
             <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-slate-800 pb-2">Entradas da Semana</h3>
             
-            {/* Lucas: Uber/99 */}
-            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
-              <div className="flex-1">
-                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['UBER_99'].name}</span>
-                <span className="text-[10px] text-sky-400 font-semibold uppercase">{SOURCES_MAP['UBER_99'].person}</span>
-              </div>
-              <div className="w-32 relative">
-                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="0,00"
-                  value={uber}
-                  onChange={e => setUber(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-sky-500"
-                />
-              </div>
-            </div>
+            {incomeSources.map(src => {
+              const personDisplay = src.person === 'person1' ? person1Name : person2Name;
+              const colorClass = src.person === 'person1' ? 'text-sky-400' : 'text-pink-400';
+              const inputFocusClass = src.person === 'person1' ? 'focus:border-sky-500' : 'focus:border-pink-500';
 
-            {/* Nicolly: Studio Lash */}
-            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
-              <div className="flex-1">
-                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['STUDIO_LASH'].name}</span>
-                <span className="text-[10px] text-pink-400 font-semibold uppercase">{SOURCES_MAP['STUDIO_LASH'].person}</span>
-              </div>
-              <div className="w-32 relative">
-                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="0,00"
-                  value={lash}
-                  onChange={e => setLash(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-pink-500"
-                />
-              </div>
-            </div>
-
-            {/* Nicolly: CM */}
-            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
-              <div className="flex-1">
-                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['CM'].name}</span>
-                <span className="text-[10px] text-pink-400 font-semibold uppercase">{SOURCES_MAP['CM'].person}</span>
-              </div>
-              <div className="w-32 relative">
-                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="0,00"
-                  value={cm}
-                  onChange={e => setCm(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-pink-500"
-                />
-              </div>
-            </div>
-
-            {/* Nicolly: SC */}
-            <div className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
-              <div className="flex-1">
-                <span className="block text-sm font-bold text-slate-200">{SOURCES_MAP['SC'].name}</span>
-                <span className="text-[10px] text-pink-400 font-semibold uppercase">{SOURCES_MAP['SC'].person}</span>
-              </div>
-              <div className="w-32 relative">
-                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="0,00"
-                  value={sc}
-                  onChange={e => setSc(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none focus:border-pink-500"
-                />
-              </div>
-            </div>
+              return (
+                <div key={src.id} className="flex items-center gap-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+                  <div className="flex-1">
+                    <span className="block text-sm font-bold text-slate-200">{src.name}</span>
+                    <span className={`text-[10px] font-semibold uppercase ${colorClass}`}>{personDisplay}</span>
+                  </div>
+                  <div className="w-32 relative">
+                    <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-sm">R$</span>
+                    <input
+                      type="number"
+                      step="0.01"
+                      placeholder="0,00"
+                      value={values[src.name] || ''}
+                      onChange={e => setValues({ ...values, [src.name]: e.target.value })}
+                      className={`w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold focus:outline-none ${inputFocusClass}`}
+                    />
+                  </div>
+                </div>
+              );
+            })}
 
           </div>
 

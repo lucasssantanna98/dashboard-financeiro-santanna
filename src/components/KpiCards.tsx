@@ -10,7 +10,21 @@ interface KpiCardsProps {
 }
 
 export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
-  const isPositive = summary.netBalance >= 0;
+  const { netBalance, totalIncome, totalBills, paidBills, pendingBills, projectedIncome, sourcesBreakdown, person1Name, person2Name, incomeSources } = summary;
+  const isPositive = netBalance >= 0;
+
+  let person1Total = 0;
+  let person2Total = 0;
+
+  Object.entries(sourcesBreakdown).forEach(([sourceName, amount]) => {
+    const srcObj = incomeSources.find(s => s.name === sourceName);
+    const p = srcObj?.person || 'person1'; // fallback
+    if (p === 'person1') {
+      person1Total += amount;
+    } else {
+      person2Total += amount;
+    }
+  });
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
@@ -35,12 +49,12 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
           <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
             <span className="flex items-center gap-1.5 text-sky-400 bg-sky-950/30 px-2 py-0.5 rounded-md">
               <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-              {formatCurrency(summary.sourcesBreakdown['ARQDIGITAL'] || 0 + summary.sourcesBreakdown['UBER_99'] || 0)}
-              <span className="text-[10px] text-sky-500/80">({summary.totalIncome > 0 ? Math.round(((summary.sourcesBreakdown['ARQDIGITAL'] || 0 + summary.sourcesBreakdown['UBER_99'] || 0) / summary.totalIncome) * 100) : 0}%)</span>
+              {person1Name}: {formatCurrency(person1Total)}
+              <span className="text-[10px] text-sky-500/80">({totalIncome > 0 ? Math.round((person1Total / totalIncome) * 100) : 0}%)</span>
             </span>
             <span className="flex items-center gap-1.5 text-pink-400 bg-pink-950/30 px-2 py-0.5 rounded-md">
               <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
-              Nicolly: {formatCurrency(summary.sourcesBreakdown['STUDIO_LASH'] || 0 + summary.sourcesBreakdown['CM'] || 0 + summary.sourcesBreakdown['SC'] || 0)}
+              {person2Name}: {formatCurrency(person2Total)}
             </span>
           </div>
         </div>
@@ -99,7 +113,7 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ summary }) => {
           <div className="flex items-center justify-between mt-4 p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
             <span className="text-xs font-semibold text-slate-400">Margem do Casal:</span>
             <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${isPositive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-              {summary.totalIncome > 0 ? Math.round((summary.netBalance / summary.totalIncome) * 100) : 0}% livre
+              {totalIncome > 0 ? Math.round((netBalance / totalIncome) * 100) : 0}% livre
             </span>
           </div>
         </div>

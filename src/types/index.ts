@@ -1,5 +1,4 @@
-export type IncomeSource = 'ARQDIGITAL' | 'UBER_99' | 'STUDIO_LASH' | 'CM' | 'SC';
-export type Person = 'Lucas' | 'Nicolly';
+export type Person = 'person1' | 'person2';
 export type PeriodType = 'monthly' | 'weekly';
 export type BillStatus = 'pending' | 'paid';
 
@@ -8,7 +7,7 @@ export interface Income {
   created_at?: string;
   date: string;
   month_year: string;
-  source_code: IncomeSource;
+  source_code: string;
   amount: number;
   week_number?: number;
   notes?: string;
@@ -47,6 +46,9 @@ export interface DashboardSummary {
   pendingBills: number;
   netBalance: number;
   projectedIncome: number;
-  sourcesBreakdown: Record<IncomeSource, number>;
-  weeklyBreakdown: Record<number, { total: number; lucas: number; nicolly: number }>;
+  sourcesBreakdown: Record<string, number>;
+  weeklyBreakdown: Record<number, { total: number; person1: number; person2: number }>;
+  person1Name: string;
+  person2Name: string;
+  incomeSources: { id: string; name: string; person: Person }[];
 }

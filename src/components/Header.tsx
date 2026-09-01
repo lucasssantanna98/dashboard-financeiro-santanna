@@ -8,6 +8,7 @@ import {
   CalendarRange, 
   ReceiptText, 
   SlidersHorizontal,
+  Settings,
   RefreshCw
 } from 'lucide-react';
 import { getMonthName, getCurrentMonthYear } from '@/lib/utils';
@@ -18,8 +19,13 @@ interface HeaderProps {
   onOpenQuickAdd: (defaultTab?: 'income' | 'bill') => void;
   onOpenWeeklyBatch: () => void;
   onOpenTemplates: () => void;
+  onOpenSettings: () => void;
   onRefresh: () => void;
   isRefreshing: boolean;
+  isAdmin?: boolean;
+  person1Name?: string;
+  person2Name?: string;
+  onLogout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,8 +34,13 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenQuickAdd,
   onOpenWeeklyBatch,
   onOpenTemplates,
+  onOpenSettings,
   onRefresh,
   isRefreshing,
+  isAdmin,
+  person1Name = 'Pessoa 1',
+  person2Name = 'Pessoa 2',
+  onLogout,
 }) => {
   const currentActualMonth = getCurrentMonthYear();
 
@@ -74,11 +85,11 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-400">
                 <span className="flex items-center gap-1 text-sky-400 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Lucas
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span> {person1Name}
                 </span>
                 <span className="text-slate-600">&bull;</span>
                 <span className="flex items-center gap-1 text-pink-400 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span> Nicolly
+                  <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span> {person2Name}
                 </span>
               </div>
             </div>
@@ -158,11 +169,36 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button
+              onClick={onOpenSettings}
+              title="Configurações do Usuário"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition active:scale-95"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+
+            <button
               onClick={onRefresh}
               title="Atualizar dados"
               className="hidden md:flex p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-transparent transition active:scale-95"
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            </button>
+
+            {isAdmin && (
+              <a href="/admin"
+                title="Painel Admin"
+                className="p-2 ml-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 transition active:scale-95"
+              >
+                Admin
+              </a>
+            )}
+            
+            <button
+              onClick={onLogout}
+              title="Sair"
+              className="p-2 ml-1 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition active:scale-95"
+            >
+              Sair
             </button>
           </div>
 

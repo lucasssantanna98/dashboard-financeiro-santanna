@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, Plus, Receipt } from 'lucide-react';
-import { IncomeSource } from '@/types';
-import { SOURCES_MAP } from '@/lib/utils';
+import { Person } from '@/types';
 import { createIncome, createMonthlyBill } from '@/lib/db';
 
 interface QuickAddModalProps {
@@ -12,6 +11,9 @@ interface QuickAddModalProps {
   defaultTab?: 'income' | 'bill';
   onSuccess: () => void;
   currentMonthYear: string;
+  incomeSources: { id: string; name: string; person: Person }[];
+  person1Name: string;
+  person2Name: string;
 }
 
 export const QuickAddModal: React.FC<QuickAddModalProps> = ({
@@ -19,13 +21,16 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
   onClose,
   defaultTab = 'income',
   onSuccess,
-  currentMonthYear
+  currentMonthYear,
+  incomeSources,
+  person1Name,
+  person2Name
 }) => {
   const [tab, setTab] = useState<'income' | 'bill'>(defaultTab);
   const [loading, setLoading] = useState(false);
 
   // Form states - Income
-  const [incomeSource, setIncomeSource] = useState<IncomeSource>('UBER_99');
+  const [incomeSource, setIncomeSource] = useState<string>(incomeSources.length > 0 ? incomeSources[0].name : '');
   const [incomeWeek, setIncomeWeek] = useState(1);
   const [incomeAmount, setIncomeAmount] = useState('');
   const [incomeDate, setIncomeDate] = useState(new Date().toISOString().split('T')[0]);
@@ -46,8 +51,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
     if (isNaN(num) || num <= 0) return;
 
     setLoading(true);
+    const srcObj = incomeSources.find(s => s.name === incomeSource);
     await createIncome({
       source_code: incomeSource,
+      person: srcObj?.person || 'person1',
       amount: num,
       date: incomeDate,
       week_number: incomeWeek,
@@ -120,27 +127,30 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({
                 Fonte de Renda
               </label>
               <div className="grid grid-cols-2 gap-2">
-                {Object.values(SOURCES_MAP).map((src) => (
-                  <label
-                    key={src.code}
-                    className={`flex flex-col p-3 rounded-xl border cursor-pointer transition-all ${
-                      incomeSource === src.code
-                        ? 'border-cyan-500 bg-cyan-950/30'
-                        : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="source"
-                      value={src.code}
-                      checked={incomeSource === src.code}
-                      onChange={() => setIncomeSource(src.code as IncomeSource)}
-                      className="sr-only"
-                    />
-                    <span className="text-xs font-bold text-slate-200 mb-0.5">{src.name}</span>
-                    <span className="text-[10px] text-slate-500 font-medium">{src.person}</span>
-                  </label>
-                ))}
+                {incomeSources.map((src) => {
+                  const personDisplay = src.person === 'person1' ? person1Name : person2Name;
+                  return (
+                    <label
+                      key={src.id}
+                      className={`flex flex-col p-3 rounded-xl border cursor-pointer transition-all ${
+                        incomeSource === src.name
+                          ? 'border-cyan-500 bg-cyan-950/30'
+                          : 'border-slate-800 bg-slate-900/50 hover:border-slate-700'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="source"
+                        value={src.name}
+                        checked={incomeSource === src.name}
+                        onChange={() => setIncomeSource(src.name)}
+                        className="sr-only"
+                      />
+                      <span className="text-xs font-bold text-slate-200 mb-0.5">{src.name}</span>
+                      <span className="text-[10px] text-slate-500 font-medium">{personDisplay}</span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
 

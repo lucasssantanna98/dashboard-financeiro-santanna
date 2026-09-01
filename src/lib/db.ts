@@ -37,12 +37,14 @@ export async function fetchDashboardData(monthYear: string) {
 
     incomes = incRes.rows.map((d: any) => ({
       ...d,
+      date: d.date instanceof Date ? `${d.date.getFullYear()}-${String(d.date.getMonth() + 1).padStart(2, '0')}-${String(d.date.getDate()).padStart(2, '0')}` : String(d.date),
       source_code: d.source,
       amount: Number(d.amount)
     })) as Income[];
 
     bills = billsRes.rows.map((d: any) => ({
       ...d,
+      due_date: d.due_date instanceof Date ? `${d.due_date.getFullYear()}-${String(d.due_date.getMonth() + 1).padStart(2, '0')}-${String(d.due_date.getDate()).padStart(2, '0')}` : String(d.due_date),
       amount: Number(d.amount)
     })) as MonthlyBill[];
 
